@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "850606701308",
+    "project_id": "track-planner-4132",
+    "storage_bucket": "track-planner-4132.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850606701308:android:d9bdf0ca8963b750a7f579",
+        "android_client_info": {
+          "package_name": "com.example.track_planner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwH6d32TmD3TL_sizIuwrzHiFeisb6HUw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -28,6 +28,37 @@ A new Flutter project.
 ## General Tips
 - Ignore Stateful widgets; I don't understand them and don't want to. There is a package to make states easier to manage
 
+## Data Model
+These are in progress and might not be perfect.
+
+### User
+- id
+- username
+- email
+- activitiesId (to link to collection of activites)
+- eventGroup
+- type (c or a, coach or athlete)
+
+### Activity
+- id
+- title
+- desc
+- setsId (collection of sets entities, a set is i.e. 4x100m w/ 2 mins rest, contains warmup, working sets, and cooldown)
+- type (type of workout, track, lift?, road?)
+
+### Set
+- id
+- isSingularDistance (bool to indicate if the collection of reps are all of the same distance, i.e. not a ladder workout. This will help in the summary page when decided whether to show 4x100 vs 100,200,300,400)
+- reps (collection of reps, each rep has time and distance)
+
+### Rep
+- id
+- distance (m)
+- restTime
+- paceTime (goal time for rep)
+- isCompleted
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

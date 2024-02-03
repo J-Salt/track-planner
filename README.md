@@ -7,13 +7,16 @@ A new Flutter project.
 - Clone the repo into VSCode
 - run `flutter doctor`
 - Follow any steps to get all green checks
-- - Typically this requires installing android studio.
-- - By installing Android studio you will have access to an Android emulator for testing.
-    - I use Pixel 3 on v. 34
-- - You will also likely have to set your `ANDROID_HOME` environment variable.
-- - Lastly, you will need to go to the SDK manager in AS and install the latest cmdline-tools
+    - Typically this requires installing android studio.
+    - By installing Android studio you will have access to an Android emulator for testing.
+        - I use Pixel 3 on v. 34
+    - You will also likely have to set your `ANDROID_HOME` environment variable.
+    - Lastly, you will need to go to the SDK manager in AS and install the latest cmdline-tools
 - After `flutter doctor` shows all green checks, run `flutter pub get` to download dependencies.
 - After this you should be able to run the app with `flutter run`.
+
+- ### Note:
+    -You might have to have your own firebase_config after I add your account to the project. I'm not sure yet.
 
 ## When Contributing
 - Open Android Studio and from the Select Project page, click the 3 dots to access AVD manager.

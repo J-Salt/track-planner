@@ -37,6 +37,7 @@ These are in progress and might not be perfect.
 - email
 - activitiesId (to link to collection of activites)
 - eventGroup
+- image (not sure how this will be stored in Firebase yet. Maybe id to refer to image stored seperately?)
 - type (c or a, coach or athlete)
 
 ### Activity

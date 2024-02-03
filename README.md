@@ -16,7 +16,7 @@ A new Flutter project.
 - After this you should be able to run the app with `flutter run`.
 
 - ### Note:
-    -You might have to have your own firebase_config after I add your account to the project. I'm not sure yet.
+    -You might have to have your own firebase_options after I add your account to the project. I'm not sure yet.
 
 ## When Contributing
 - Open Android Studio and from the Select Project page, click the 3 dots to access AVD manager.

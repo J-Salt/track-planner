@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:track_planner/auth.dart';
+import 'package:track_planner/login.dart';
+import 'service.dart';
 
 class Profile extends StatelessWidget {
+  Service service = Service();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +25,28 @@ class Profile extends StatelessWidget {
                       width: 100.0,
                     ),
                   ),
-                  const Align(
+                  Align(
                     alignment: AlignmentDirectional.topStart,
-                    child: Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("John Salt"),
-                        ],
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text("John Salt"),
+                        TextButton(
+                          onPressed: () => service.createUser(
+                              123, {"name": "John", "gradYear": 2024}),
+                          child: const Text("Create User"),
+                        ),
+                        TextButton(
+                          onPressed: () => {
+                            Auth().signOut(),
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login()))
+                          },
+                          child: const Text("Logout"),
+                        ),
+                      ],
                     ),
                   ),
                 ],

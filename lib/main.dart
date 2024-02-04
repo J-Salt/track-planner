@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'activities.dart';
-import 'firebase_options.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'profile.dart';
 import 'calendar.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth.dart';
+import 'login.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final User? user = Auth().currentUser;
+
+  Future<void> signOut() async {
+    await Auth().signOut();
+  }
 
   // This widget is the root of your application.
   @override
@@ -37,7 +47,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(title: 'Flutter Demo Home Page'),
+      home: user == null ? Login() : HomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -53,15 +63,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
-
-  void addUser() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference ref = database.ref('users/123');
-    ref.set({"name": "John", "gender": "m"});
-  }
 
   @override
   Widget build(BuildContext context) {

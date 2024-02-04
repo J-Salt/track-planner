@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '850606701308',
     projectId: 'track-planner-4132',
     authDomain: 'track-planner-4132.firebaseapp.com',
+    databaseURL: 'https://track-planner-4132-default-rtdb.firebaseio.com',
     storageBucket: 'track-planner-4132.appspot.com',
   );
 
@@ -57,6 +58,7 @@ class DefaultFirebaseOptions {
     appId: '1:850606701308:android:d9bdf0ca8963b750a7f579',
     messagingSenderId: '850606701308',
     projectId: 'track-planner-4132',
+    databaseURL: 'https://track-planner-4132-default-rtdb.firebaseio.com',
     storageBucket: 'track-planner-4132.appspot.com',
   );
 
@@ -65,6 +67,7 @@ class DefaultFirebaseOptions {
     appId: '1:850606701308:ios:ed21e66282c0650ba7f579',
     messagingSenderId: '850606701308',
     projectId: 'track-planner-4132',
+    databaseURL: 'https://track-planner-4132-default-rtdb.firebaseio.com',
     storageBucket: 'track-planner-4132.appspot.com',
     iosBundleId: 'com.example.trackPlanner',
   );
@@ -74,6 +77,7 @@ class DefaultFirebaseOptions {
     appId: '1:850606701308:ios:cbbe64ac49323e81a7f579',
     messagingSenderId: '850606701308',
     projectId: 'track-planner-4132',
+    databaseURL: 'https://track-planner-4132-default-rtdb.firebaseio.com',
     storageBucket: 'track-planner-4132.appspot.com',
     iosBundleId: 'com.example.trackPlanner.RunnerTests',
   );

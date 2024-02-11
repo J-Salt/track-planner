@@ -34,6 +34,7 @@ These are in progress and might not be perfect.
 ### User
 - id
 - username
+- name
 - email
 - activitiesId (to link to collection of activites)
 - eventGroup

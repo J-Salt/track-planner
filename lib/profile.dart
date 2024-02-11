@@ -33,7 +33,8 @@ class Profile extends StatelessWidget {
                         const Text("John Salt"),
                         TextButton(
                           onPressed: () => service.createUser(
-                              123, {"name": "John", "gradYear": 2024}),
+                              Auth().currentUser!.uid,
+                              {"name": "John", "gradYear": 2024}),
                           child: const Text("Create User"),
                         ),
                         TextButton(

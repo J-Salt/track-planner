@@ -23,38 +23,41 @@ class Login extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text("Login Page")),
-      body: Center(
-        child: Form(
-          child: Column(
-            children: [
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                onSubmitted: (String value) {
-                  email = value;
-                },
-              ),
-              TextField(
-                controller: passwordController,
-                keyboardType: TextInputType.text,
-                obscureText: true,
-                onSubmitted: (String value) {
-                  password = value;
-                },
-              ),
-              ElevatedButton(
-                onPressed: () => _login(emailController.value.text,
-                    passwordController.value.text, context),
-                child: Text("Login"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Register()),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
+          child: Form(
+            child: Column(
+              children: [
+                TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  onSubmitted: (String value) {
+                    email = value;
+                  },
                 ),
-                child: const Text("Register"),
-              )
-            ],
+                TextField(
+                  controller: passwordController,
+                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                  onSubmitted: (String value) {
+                    password = value;
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () => _login(emailController.value.text,
+                      passwordController.value.text, context),
+                  child: Text("Login"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Register()),
+                  ),
+                  child: const Text("Register"),
+                )
+              ],
+            ),
           ),
         ),
       ),

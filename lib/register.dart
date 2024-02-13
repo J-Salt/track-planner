@@ -65,28 +65,16 @@ class Register extends ConsumerWidget {
                   TextField(
                     controller: firstNameController,
                     keyboardType: TextInputType.text,
-                    // onChanged: (value) => {
-                    //   ref.read(firstNameProvider.notifier).state = value,
-                    // },
                   ),
                   const Text("Last Name"),
                   TextField(
                     controller: lastNameController,
                     keyboardType: TextInputType.text,
-                    // onChanged: (value) => {
-                    //   ref.read(lastNameProvider.notifier).state = value,
-                    // },
                   ),
                   const Text("Graduation Year"),
                   TextField(
                     controller: gradYearController,
                     keyboardType: TextInputType.number,
-                    // onChanged: (value) => {
-                    //   ref.read(gradYearProvider.notifier).state =
-                    //       int.tryParse(value) != null
-                    //           ? int.parse(value)
-                    //           : DateTime.now().year,
-                    // },
                   ),
                   const Text("Coach?"),
                   Checkbox(
@@ -119,18 +107,12 @@ class Register extends ConsumerWidget {
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    // onChanged: (value) => {
-                    //   ref.read(emailProvider.notifier).state = value,
-                    // },
                   ),
                   const Text("Password"),
                   TextField(
                     controller: passwordController,
                     keyboardType: TextInputType.text,
                     obscureText: true,
-                    // onChanged: (value) => {
-                    //   ref.read(passwordProvider.notifier).state = value,
-                    // },
                   ),
                   TextButton(
                       onPressed: () => {

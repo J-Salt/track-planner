@@ -44,14 +44,6 @@ class Register extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String email = ref.watch(emailProvider);
-    final String password = ref.watch(passwordProvider);
-    final String firstName = ref.watch(firstNameProvider);
-    final String lastName = ref.watch(lastNameProvider);
-    final EventGroup group = ref.watch(selectedEventGroupProvider);
-    final int gradYear = ref.watch(gradYearProvider);
-    final bool isCoach = ref.watch(isCoachProvider);
-
     return Scaffold(
       appBar: AppBar(title: const Text("Register Page")),
       body: SingleChildScrollView(

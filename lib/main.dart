@@ -33,15 +33,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: user == null ? Login() : HomePage(title: 'Flutter Demo Home Page'),
+      home: user == null ? Login() : HomePage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -49,13 +47,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
-
+  List<String> pageTitles = ["Activities", "Calendar", "Profile"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          fontSize: 20,
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(pageTitles[currentPageIndex]),
       ),
       body: <Widget>[Activities(), Calendar(), Profile()][currentPageIndex],
       bottomNavigationBar: NavigationBar(

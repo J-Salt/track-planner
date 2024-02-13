@@ -9,9 +9,7 @@ class Login extends StatelessWidget {
   void _login(email, password, context) async {
     await Auth().signIn(email: email, password: password);
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const HomePage(title: "Home Page")));
+        context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 
   late String email;

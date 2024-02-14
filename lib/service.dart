@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:track_planner/register.dart';
 
 /// Service class with functions for editing firebase entities
 class Service {

@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:track_planner/auth.dart';
 import 'package:track_planner/login.dart';
+import 'package:track_planner/utils/reusable_appbar.dart';
 import 'service.dart';
 
 class Profile extends StatelessWidget {
   Service service = Service();
+
+  void _logout(BuildContext context) {
+    Auth().signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Login()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: ReusableAppBar(
+        pageTitle: "Profile",
+        context: context,
+        trailingActions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _logout(context),
+          )
+        ],
+      ),
       body: Container(
         //Adds padding around the edges
         padding: EdgeInsets.all(10.0),
@@ -31,22 +49,6 @@ class Profile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text("John Salt"),
-                        TextButton(
-                          onPressed: () => service.createUser(
-                              Auth().currentUser!.uid,
-                              {"name": "John", "gradYear": 2024}),
-                          child: const Text("Create User"),
-                        ),
-                        TextButton(
-                          onPressed: () => {
-                            Auth().signOut(),
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Login()))
-                          },
-                          child: const Text("Logout"),
-                        ),
                       ],
                     ),
                   ),

@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:track_planner/create_workout.dart';
+import 'package:track_planner/utils/reusable_appbar.dart';
 
 final selectedDayProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 class Calendar extends ConsumerWidget {
+  const Calendar({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     DateTime now = DateTime.now();
 
     final selectedDay = ref.watch(selectedDayProvider);
     return Scaffold(
+      appBar: ReusableAppBar(
+        pageTitle: "Calendar",
+        context: context,
+        trailingActions: [
+          IconButton(
+              onPressed: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateWorkout()))
+                  },
+              icon: const Icon(Icons.add)),
+        ],
+      ),
       body: TableCalendar(
         firstDay: DateTime(
           now.year,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:track_planner/main.dart';
 import 'package:track_planner/register.dart';
+import 'package:track_planner/utils/reusable_appbar.dart';
 import 'auth.dart';
 
 class Login extends StatelessWidget {
@@ -20,7 +21,10 @@ class Login extends StatelessWidget {
     final TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Login Page")),
+      appBar: ReusableAppBar(
+        pageTitle: "Login",
+        context: context,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

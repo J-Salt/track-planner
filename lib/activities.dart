@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:track_planner/preview_workout.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
 
 class Activities extends StatelessWidget {
@@ -11,16 +12,15 @@ class Activities extends StatelessWidget {
         pageTitle: "Activities",
         context: context,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'ACTIVITES PAGE',
-            ),
-          ],
-        ),
-      ),
+      body: ListView(
+        children: [
+          PreviewWorkout(),
+          PreviewWorkout(),
+          PreviewWorkout(),
+          PreviewWorkout(),
+          PreviewWorkout(),
+        ],
+      )
     );
   }
 }

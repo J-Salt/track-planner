@@ -12,15 +12,17 @@ class Activities extends StatelessWidget {
         pageTitle: "Activities",
         context: context,
       ),
-      body: ListView(
-        children: [
-          PreviewWorkout(),
-          PreviewWorkout(),
-          PreviewWorkout(),
-          PreviewWorkout(),
-          PreviewWorkout(),
-        ],
-      )
-    );
+      body: Center(
+        child: ListView(
+          children: const <Widget>[
+                PreviewWorkout(),
+                PreviewWorkout(),
+                PreviewWorkout(),
+                PreviewWorkout(),
+                PreviewWorkout(),
+              ],
+            ),
+        ),
+      );
   }
 }

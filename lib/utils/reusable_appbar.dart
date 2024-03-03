@@ -10,7 +10,7 @@ class ReusableAppBar extends AppBar {
       {super.key,
       required this.pageTitle,
       required this.context,
-      trailingActions,
+      List<Widget>? trailingActions,
       leadingActions})
       : super(
           title: Text(pageTitle),

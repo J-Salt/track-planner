@@ -21,7 +21,7 @@ class Service {
         .catchError((err) => {print(err)});
   }
 
-  // TODO persist sets and add the id's to the parent activity
+  // TODO add all fields
   void createActivity(String title, String desc, List<Object> sets) async {
     var uuid = const Uuid();
     List<String> setIds = [];

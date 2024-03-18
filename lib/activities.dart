@@ -16,10 +16,6 @@ class Activities extends StatelessWidget {
         child: ListView(
           children: const <Widget>[
                 PreviewWorkout(),
-                PreviewWorkout(),
-                PreviewWorkout(),
-                PreviewWorkout(),
-                PreviewWorkout(),
               ],
             ),
         ),

@@ -11,8 +11,11 @@ class PreviewWorkout extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ViewWorkout())),
         child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.inversePrimary,
+            borderRadius: BorderRadius.circular(8),
+          ),
           height: 200,
-          color: Theme.of(context).colorScheme.inversePrimary,
           child: const Center(
             child: Text(
               'Preview Workout'

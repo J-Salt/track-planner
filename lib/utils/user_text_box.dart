@@ -36,7 +36,7 @@ class UserTextBox extends StatelessWidget {
               IconButton(
                 onPressed: (){},
                 icon: Icon(
-                  Icons.settings, 
+                  Icons.edit, 
                   color: Colors.grey[400],
                 ),
               ),
@@ -45,7 +45,6 @@ class UserTextBox extends StatelessWidget {
 
           // text
           Text(text),
-
         ],
       ),
     );

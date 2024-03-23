@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:track_planner/utils/workout.dart';
 import 'package:uuid/uuid.dart';
 
 /// Service class with functions for editing firebase entities
@@ -27,6 +31,7 @@ class Service {
 
     //Prepare the workout object
     List<Object> tempSets = [];
+
     Map<String, Object> finalWorkout = {"sets": []};
     for (int set = 0; set < workout.length; set++) {
       Map<String, Object> currentSet = {};
@@ -36,6 +41,7 @@ class Service {
         currentRep["distance"] = workout[set][rep]["distance"]!;
         currentRep["numReps"] = workout[set][rep]["numReps"]!;
         currentRep["repRest"] = workout[set][rep]["repRest"]!;
+        currentRep["repTime"] = workout[set][rep]["repTime"]!;
         tempReps.add(currentRep);
       }
       currentSet["reps"] = tempReps;
@@ -52,18 +58,53 @@ class Service {
     }
   }
 
-  Future<List<DateTime>> getDaysWithWorkouts(String uid) async {
-    List<DateTime> dates = [];
+  Future<Map<DateTime, List<Workout>>> getWorkouts(String uid) async {
+    Map<DateTime, List<Workout>> workouts = {};
     db = FirebaseDatabase.instance.ref("users/$uid/workouts");
     DataSnapshot snapshot = await db.orderByChild('date').get();
-    if (snapshot.exists) {
-      Map<Object?, Object?> workouts = snapshot.value as Map<Object?, Object?>;
-      for (MapEntry workout in workouts.entries) {
-        DateTime date = DateTime.parse(workout.value["date"].toString());
-        dates.add(date);
+
+    final Map<Object?, Object?> data = snapshot.value as Map<Object?, Object?>;
+    data.forEach((key, workout) {
+      dynamic sets = (workout as Map<Object?, Object?>)["sets"];
+      List<Set> tempSets = [];
+      List<Rep> tempReps = [];
+      for (Map<Object?, Object?> set in sets) {
+        Duration setRest = parseDuration(set["setRest"].toString());
+        dynamic reps = set["reps"];
+
+        for (Map<Object?, Object?> rep in reps) {
+          tempReps.add(Rep(
+              distance: rep["distance"].toString(),
+              numReps: rep["numReps"].toString(),
+              repRest: parseDuration(rep["repRest"].toString())));
+        }
+        tempSets.add(Set(reps: tempReps, setRest: setRest));
       }
-    }
-    return dates;
+
+      DateTime date = DateTime.parse(workout["date"].toString());
+
+      date = DateTime(date.year, date.month, date.day)
+          .toUtc()
+          .subtract(Duration(hours: 4));
+
+      if (workouts.containsKey(date)) {
+        workouts[date]?.add(Workout(date: date, sets: tempSets));
+      } else {
+        workouts[date] = [Workout(date: date, sets: tempSets)];
+      }
+    });
+
+    return workouts;
+  }
+
+  Duration parseDuration(String s) {
+    List<String> timeParts = s.split(':');
+
+    List<String> secondParts = timeParts[2].split(".");
+    return Duration(
+        hours: int.parse(timeParts[0]),
+        minutes: int.parse(timeParts[1]),
+        seconds: int.parse(secondParts[0]));
   }
 
   // TODO add all fields

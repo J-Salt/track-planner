@@ -23,7 +23,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   final Service service = Service();
   final String uid = Auth().currentUser!.uid;
   late final ValueNotifier<List<Workout>> _selectedWorkouts;
-  late Future<List<DateTime>> _dates;
+  late Future<Map<DateTime, List<Workout>>> _dates;
 
   @override
   void initState() {
@@ -55,8 +55,8 @@ class _CalendarState extends ConsumerState<Calendar> {
     return workouts[day] ?? [];
   }
 
-  Future<List<DateTime>> _getWorkoutDates() async {
-    return await service.getDaysWithWorkouts(uid);
+  Future<Map<DateTime, List<Workout>>> _getWorkoutDates() async {
+    return await service.getWorkouts(uid);
   }
 
   @override
@@ -90,17 +90,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                 child: Text("Error loading data"),
               );
             } else {
-              for (var element in snapshot.data!) {
-                DateTime temp =
-                    DateTime(element.year, element.month, element.day)
-                        .toUtc()
-                        .subtract(Duration(hours: 4));
-
-                workouts.addAll({
-                  temp: [Workout("TEMP")]
-                });
-              }
-
+              workouts = snapshot.data!;
               return Column(
                 children: [
                   TableCalendar(
@@ -142,26 +132,138 @@ class _CalendarState extends ConsumerState<Calendar> {
                     height: 8.0,
                   ),
                   Expanded(
-                    child: ValueListenableBuilder(
-                        valueListenable: _selectedWorkouts,
-                        builder: (context, value, _) {
-                          return ListView.builder(
-                              itemCount: value.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: ListTile(
-                                    onTap: () => print("tile pressed"),
-                                    title: Text("${value[index]}"),
-                                  ),
-                                );
-                              });
-                        }),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ValueListenableBuilder(
+                          valueListenable: _selectedWorkouts,
+                          builder: (context, value, _) {
+                            return ListView.builder(
+                                //build workouts
+                                itemCount: value.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    child: Wrap(
+                                      children: [
+                                        Container(
+                                          width: 600,
+                                          height: 400,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ListView.builder(
+                                              //build sets
+                                              itemCount:
+                                                  value[index].sets.length,
+                                              itemBuilder: (context, setIndex) {
+                                                return Card(
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        width: 600,
+                                                        height: 150,
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        child: ListView.builder(
+                                                          //build reps
+                                                          itemCount: value[
+                                                                  index]
+                                                              .sets[setIndex]
+                                                              .reps
+                                                              .length,
+                                                          itemBuilder: (context,
+                                                              repIndex) {
+                                                            return Card(
+                                                              child: Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical:
+                                                                        4),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12),
+                                                                ),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                        "${repIndex + 1}",
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              16,
+                                                                        )),
+                                                                    const Divider(),
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                            "${value[index].sets[setIndex].reps[repIndex].distance}m x ${value[index].sets[setIndex].reps[repIndex].numReps}"),
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              50,
+                                                                        ),
+                                                                        const Icon(
+                                                                            Icons.timer),
+                                                                        Text(
+                                                                            //TODO change to repTime (How long to complete each rep)
+                                                                            "${value[index].sets[setIndex].reps[repIndex].repRest.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60}")
+                                                                      ],
+                                                                    ),
+                                                                    Text(
+                                                                        "Rest: ${value[index].sets[setIndex].reps[repIndex].repRest.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60}")
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  // Container(
+                                  //   margin: const EdgeInsets.symmetric(
+                                  //       horizontal: 12, vertical: 4),
+                                  //   decoration: BoxDecoration(
+                                  //     border: Border.all(),
+                                  //     borderRadius: BorderRadius.circular(12),
+                                  //   ),
+                                  //   child: ListTile(
+                                  //     onTap: () => print("tile pressed"),
+                                  //     title: Text("${value[index]}"),
+                                  //   ),
+                                  // );
+                                });
+                          }),
+                    ),
                   )
                 ],
               );

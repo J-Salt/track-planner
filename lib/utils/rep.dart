@@ -6,13 +6,14 @@ class Rep extends StatefulWidget {
   final ValueChanged<String> onDistanceChanged; // Callback function
   final ValueChanged<String> onNumRepsChanged;
   final ValueChanged<Duration> onRepRestChanged;
+  final ValueChanged<Duration> onRepTimeChanged;
 
-  const Rep({
-    super.key,
-    required this.onDistanceChanged,
-    required this.onNumRepsChanged,
-    required this.onRepRestChanged,
-  });
+  const Rep(
+      {super.key,
+      required this.onDistanceChanged,
+      required this.onNumRepsChanged,
+      required this.onRepRestChanged,
+      required this.onRepTimeChanged});
 
   @override
   _RepState createState() => _RepState();
@@ -22,6 +23,7 @@ class _RepState extends State<Rep> {
   String _distance = '';
   dynamic _numReps = '';
   Duration _repRest = Duration(seconds: 0);
+  Duration _repTime = Duration(seconds: 0);
 
   List<DropdownMenuEntry> numRepsItems = [
     const DropdownMenuEntry(value: 1, label: "x1"),
@@ -38,45 +40,68 @@ class _RepState extends State<Rep> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: TextField(
-              decoration: InputDecoration(hintText: "Distance"),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  _distance = value;
-                });
-                widget.onDistanceChanged(value); // Call callback function
-              },
-            ),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-          DropdownMenu(
-            dropdownMenuEntries: numRepsItems,
-            hintText: "Reps",
-            inputDecorationTheme: InputDecorationTheme(
-              constraints: BoxConstraints.tight(
-                Size.fromWidth(80),
+      padding: const EdgeInsets.all(2.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 80,
+                child: TextField(
+                  decoration: const InputDecoration(hintText: "Distance"),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      _distance = value;
+                    });
+                    widget.onDistanceChanged(value); // Call callback function
+                  },
+                ),
               ),
-            ),
-            onSelected: (value) {
-              // value = int
-              setState(() {
-                _numReps = "$value";
-              });
-              widget.onNumRepsChanged(_numReps); // Call callback function
-            },
+              SizedBox(
+                width: 20,
+              ),
+              DropdownMenu(
+                dropdownMenuEntries: numRepsItems,
+                hintText: "Reps",
+                inputDecorationTheme: InputDecorationTheme(
+                  constraints: BoxConstraints.tight(Size(100, 50)),
+                ),
+                onSelected: (value) {
+                  // value = int
+                  setState(() {
+                    _numReps = "$value";
+                  });
+                  widget.onNumRepsChanged(_numReps); // Call callback function
+                },
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => {onTapRepTime("Select rep time")},
+                      child: Row(children: [
+                        Icon(Icons.directions_run),
+                        Text(
+                            "${_repTime.inMinutes}:${twoDigitSeconds(_repTime)}"),
+                      ]),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => {onTap("Select rep rest")},
+                      child: Row(children: [
+                        Icon(Icons.timer),
+                        Text(
+                            "${_repRest.inMinutes}:${twoDigitSeconds(_repRest)}"),
+                      ]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          IconButton(onPressed: () => {onTap()}, icon: Icon(Icons.timer)),
-          Text("${_repRest.inMinutes}:${twoDigitSeconds(_repRest)}"),
-        ],
+        ),
       ),
     );
   }
@@ -92,28 +117,34 @@ class _RepState extends State<Rep> {
     }
   }
 
-  void onTap() {
+  void onTap(String title) {
     Picker(
       adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-        const NumberPickerColumn(begin: 0, end: 999, suffix: Text(' minutes')),
+        const NumberPickerColumn(begin: 0, end: 59, suffix: Text(' minutes')),
         const NumberPickerColumn(
-            begin: 0, end: 60, suffix: Text(' seconds'), jump: 5),
+            begin: 0, end: 55, suffix: Text(' seconds'), jump: 5),
       ]),
       delimiter: <PickerDelimiter>[
         PickerDelimiter(
           child: Container(
             width: 30.0,
             alignment: Alignment.center,
-            child: Icon(Icons.more_vert),
+            child: const Text(
+              ":",
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         )
       ],
       hideHeader: true,
       confirmText: 'OK',
       confirmTextStyle:
-          TextStyle(inherit: false, color: Colors.red, fontSize: 22),
-      title: const Text('Select duration'),
-      selectedTextStyle: TextStyle(color: Colors.blue),
+          const TextStyle(inherit: false, color: Colors.red, fontSize: 22),
+      title: Text(title),
+      selectedTextStyle: const TextStyle(color: Colors.blue),
       onConfirm: (Picker picker, List<int> value) {
         // You get your duration here
         Duration _duration = Duration(
@@ -123,6 +154,46 @@ class _RepState extends State<Rep> {
           _repRest = _duration;
         });
         widget.onRepRestChanged(_duration);
+      },
+    ).showDialog(context);
+  }
+
+  void onTapRepTime(String title) {
+    Picker(
+      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+        const NumberPickerColumn(begin: 0, end: 59, suffix: Text(' minutes')),
+        const NumberPickerColumn(begin: 0, end: 59, suffix: Text(' seconds')),
+      ]),
+      delimiter: <PickerDelimiter>[
+        PickerDelimiter(
+          child: Container(
+            width: 30.0,
+            alignment: Alignment.center,
+            child: const Text(
+              ":",
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        )
+      ],
+      hideHeader: true,
+      confirmText: 'OK',
+      confirmTextStyle:
+          const TextStyle(inherit: false, color: Colors.red, fontSize: 22),
+      title: Text(title),
+      selectedTextStyle: const TextStyle(color: Colors.blue),
+      onConfirm: (Picker picker, List<int> value) {
+        // You get your duration here
+        Duration _duration = Duration(
+            minutes: picker.getSelectedValues()[0],
+            seconds: picker.getSelectedValues()[1]);
+        setState(() {
+          _repTime = _duration;
+        });
+        widget.onRepTimeChanged(_duration);
       },
     ).showDialog(context);
   }

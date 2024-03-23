@@ -37,6 +37,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
               //TODO: Remove my id and instead give a list of assigned users
               service.createWorkout(sets, setRests,
                   ["hl8yydfqLzdcy0cdDp3R6F1Kckq1"], _selectedDate);
+              Navigator.pop(context);
             },
           )
         ],
@@ -45,6 +46,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
         itemCount: sets.length,
         itemBuilder: (context, index) {
           return Set(
+            index: index,
             reps: sets[index],
             setRest: Duration(seconds: 0),
             onAddRep: () {
@@ -53,6 +55,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                   'distance': '',
                   'numReps': '',
                   'repRest': '',
+                  'repTime': '',
                 });
               });
             },

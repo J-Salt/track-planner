@@ -25,6 +25,13 @@ class Service {
         .catchError((err) => {print(err)});
   }
 
+  Future<Map<Object?, Object?>> getUser(String uid) async {
+    db = FirebaseDatabase.instance.ref("users/$uid");
+
+    DataSnapshot snapshot = await db.get();
+    return snapshot.value as Map<Object?, Object?>;
+  }
+
   void createWorkout(List<List<Map<String, String>>> workout,
       List<Duration> setRests, List<String> assignedAthletes, DateTime date) {
     String uuid = const Uuid().v4();
@@ -62,7 +69,7 @@ class Service {
     Map<DateTime, List<Workout>> workouts = {};
     db = FirebaseDatabase.instance.ref("users/$uid/workouts");
     DataSnapshot snapshot = await db.orderByChild('date').get();
-
+    if (snapshot.value == null) return {};
     final Map<Object?, Object?> data = snapshot.value as Map<Object?, Object?>;
     data.forEach((key, workout) {
       dynamic sets = (workout as Map<Object?, Object?>)["sets"];
@@ -76,7 +83,8 @@ class Service {
           tempReps.add(Rep(
               distance: rep["distance"].toString(),
               numReps: rep["numReps"].toString(),
-              repRest: parseDuration(rep["repRest"].toString())));
+              repRest: parseDuration(rep["repRest"].toString()),
+              repTime: parseDuration(rep["repTime"].toString())));
         }
         tempSets.add(Set(reps: tempReps, setRest: setRest));
       }
@@ -99,6 +107,7 @@ class Service {
 
   Duration parseDuration(String s) {
     List<String> timeParts = s.split(':');
+    if (s == "null" || null == s) return Duration(seconds: 0);
 
     List<String> secondParts = timeParts[2].split(".");
     return Duration(

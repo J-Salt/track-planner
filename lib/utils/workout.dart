@@ -21,9 +21,11 @@ class Rep {
   final String distance;
   final String numReps;
   final Duration repRest;
+  final Duration repTime;
   Rep({
     required this.distance,
     required this.numReps,
     required this.repRest,
+    required this.repTime,
   });
 }

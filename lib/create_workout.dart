@@ -1,12 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:track_planner/auth.dart';
 import 'package:track_planner/calendar.dart';
 import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
-import 'package:track_planner/utils/set.dart'; // Assuming Rep widget is in a file named 'rep.dart'
+import 'package:track_planner/utils/set.dart';
+import 'package:track_planner/utils/workout.dart'
+    as model; // Assuming Rep widget is in a file named 'rep.dart'
 
 class CreateWorkout extends ConsumerStatefulWidget {
-  const CreateWorkout();
+  final void Function(List<model.Workout>) updateSelectedWorkouts;
+  final List<model.Workout> Function(DateTime) getWorkoutsForDay;
+  final DateTime selectedDay;
+
+  const CreateWorkout({
+    required this.updateSelectedWorkouts,
+    required this.getWorkoutsForDay,
+    required this.selectedDay,
+  });
 
   @override
   _CreateWorkoutState createState() => _CreateWorkoutState();
@@ -37,9 +49,12 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
               //TODO: Remove my id and instead give a list of assigned users
               service.createWorkout(sets, setRests,
                   ["hl8yydfqLzdcy0cdDp3R6F1Kckq1"], _selectedDate);
+              widget.updateSelectedWorkouts(
+                  widget.getWorkoutsForDay(widget.selectedDay));
               Navigator.pop(context);
+              //UPDATE _selectedWorkouts = _getWorkoutsForDay(_selectedDay) HERE
             },
-          )
+          ),
         ],
       ),
       body: ListView.builder(

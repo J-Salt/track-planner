@@ -32,6 +32,30 @@ class Service {
     return snapshot.value as Map<Object?, Object?>;
   }
 
+  Future<List<Map<String, dynamic>>> getAthletesForAssignment() async {
+    db = FirebaseDatabase.instance.ref("users");
+    DatabaseEvent snapshot =
+        await db.orderByChild("isCoach").equalTo(false).once();
+
+    List<Map<String, dynamic>> out = [];
+    Map<Object?, Object?> temp =
+        snapshot.snapshot.value as Map<Object?, Object?>;
+    Map<String, dynamic> tempMap = {};
+    temp.forEach((key, value) {
+      Map<Object?, Object?> t = value as Map<Object?, Object?>;
+      tempMap = {
+        "id": key,
+        "name": value["name"] ?? "",
+        "gradYear": value["gradYear"] ?? 0,
+        "eventGroup": value["eventGroup"] ?? "",
+        "isCoach": value["isCoach"],
+        "selected": false,
+      };
+      out.add(tempMap);
+    });
+    return out;
+  }
+
   void createWorkout(List<List<Map<String, String>>> workout,
       List<Duration> setRests, List<String> assignedAthletes, DateTime date) {
     String uuid = const Uuid().v4();
@@ -77,7 +101,7 @@ class Service {
       List<Rep> tempReps = [];
       for (Map<Object?, Object?> set in sets) {
         Duration setRest = parseDuration(set["setRest"].toString());
-        dynamic reps = set["reps"];
+        dynamic reps = set["reps"] ?? [];
 
         for (Map<Object?, Object?> rep in reps) {
           tempReps.add(Rep(
@@ -107,7 +131,7 @@ class Service {
 
   Duration parseDuration(String s) {
     List<String> timeParts = s.split(':');
-    if (s == "null" || null == s) return Duration(seconds: 0);
+    if (s == "null" || s == "" || null == s) return Duration(seconds: 0);
 
     List<String> secondParts = timeParts[2].split(".");
     return Duration(

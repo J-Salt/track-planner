@@ -23,11 +23,11 @@ class Set extends StatefulWidget {
 }
 
 class _SetState extends State<Set> {
-  Duration _setRest = Duration(seconds: 0);
+  Duration _setRest = const Duration(seconds: 0);
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -35,14 +35,14 @@ class _SetState extends State<Set> {
             padding: const EdgeInsets.fromLTRB(10, 5.0, 0.0, 0.0),
             child: Text(
               "Set ${widget.index + 1}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
             child: Divider(),
           ),
           for (int i = 0; i < widget.reps.length; i++)
@@ -86,12 +86,12 @@ class _SetState extends State<Set> {
                   children: [
                     Text("Rest", style: TextStyle(fontSize: 16)),
                     Text(displayDuration(_setRest),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const Padding(
-                  padding: const EdgeInsets.fromLTRB(12.0, 0.0, 24.0, 0.0),
+                  padding: EdgeInsets.fromLTRB(12.0, 0.0, 24.0, 0.0),
                   child: SizedBox(
                     width: 120,
                     child: Divider(
@@ -102,8 +102,8 @@ class _SetState extends State<Set> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
             child: Divider(),
           ),
           Padding(
@@ -113,7 +113,7 @@ class _SetState extends State<Set> {
               children: [
                 ElevatedButton(
                   onPressed: widget.onAddRep,
-                  child: Text('Add Rep'),
+                  child: const Text('Add Rep'),
                 ),
                 ElevatedButton(
                   onPressed: () {

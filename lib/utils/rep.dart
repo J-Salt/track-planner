@@ -22,8 +22,8 @@ class Rep extends StatefulWidget {
 class _RepState extends State<Rep> {
   String _distance = '';
   dynamic _numReps = '';
-  Duration _repRest = Duration(seconds: 0);
-  Duration _repTime = Duration(seconds: 0);
+  Duration _repRest = const Duration(seconds: 0);
+  Duration _repTime = const Duration(seconds: 0);
 
   List<DropdownMenuEntry> numRepsItems = [
     const DropdownMenuEntry(value: 1, label: "x1"),
@@ -60,14 +60,14 @@ class _RepState extends State<Rep> {
                   },
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               DropdownMenu(
                 dropdownMenuEntries: numRepsItems,
                 hintText: "Reps",
                 inputDecorationTheme: InputDecorationTheme(
-                  constraints: BoxConstraints.tight(Size(100, 50)),
+                  constraints: BoxConstraints.tight(const Size(100, 50)),
                 ),
                 onSelected: (value) {
                   // value = int
@@ -83,7 +83,7 @@ class _RepState extends State<Rep> {
                     ElevatedButton(
                       onPressed: () => {onTapRepTime("Select rep time")},
                       child: Row(children: [
-                        Icon(Icons.directions_run),
+                        const Icon(Icons.directions_run),
                         Text(
                             "${_repTime.inMinutes}:${twoDigitSeconds(_repTime)}"),
                       ]),
@@ -91,7 +91,7 @@ class _RepState extends State<Rep> {
                     ElevatedButton(
                       onPressed: () => {onTap("Select rep rest")},
                       child: Row(children: [
-                        Icon(Icons.timer),
+                        const Icon(Icons.timer),
                         Text(
                             "${_repRest.inMinutes}:${twoDigitSeconds(_repRest)}"),
                       ]),
@@ -147,13 +147,13 @@ class _RepState extends State<Rep> {
       selectedTextStyle: const TextStyle(color: Colors.blue),
       onConfirm: (Picker picker, List<int> value) {
         // You get your duration here
-        Duration _duration = Duration(
+        Duration duration = Duration(
             minutes: picker.getSelectedValues()[0],
             seconds: picker.getSelectedValues()[1]);
         setState(() {
-          _repRest = _duration;
+          _repRest = duration;
         });
-        widget.onRepRestChanged(_duration);
+        widget.onRepRestChanged(duration);
       },
     ).showDialog(context);
   }
@@ -187,13 +187,13 @@ class _RepState extends State<Rep> {
       selectedTextStyle: const TextStyle(color: Colors.blue),
       onConfirm: (Picker picker, List<int> value) {
         // You get your duration here
-        Duration _duration = Duration(
+        Duration duration = Duration(
             minutes: picker.getSelectedValues()[0],
             seconds: picker.getSelectedValues()[1]);
         setState(() {
-          _repTime = _duration;
+          _repTime = duration;
         });
-        widget.onRepTimeChanged(_duration);
+        widget.onRepTimeChanged(duration);
       },
     ).showDialog(context);
   }

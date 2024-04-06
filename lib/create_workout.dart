@@ -1,8 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:track_planner/auth.dart';
 import 'package:track_planner/calendar.dart';
 import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
@@ -31,6 +28,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
   List<Duration> setRests = [];
   late DateTime _selectedDate;
   late final ValueNotifier<List<Map<String, dynamic>>> _athletes;
+  bool donePressed = false;
 
   @override
   void initState() {
@@ -58,7 +56,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
     return assignedAthletesIds;
   }
 
-  void _showUserSelectionDialog(BuildContext context) async {
+  Future<bool?> _showUserSelectionDialog(BuildContext context) async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -105,6 +103,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
+                            donePressed = false;
                             Navigator.of(context)
                                 .pop(false); // Close dialog, return false
                           },
@@ -116,7 +115,8 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                                 _assignWorkouts(_athletes.value);
                             service.createWorkout(sets, setRests,
                                 assignedAthletesIds, _selectedDate);
-                            Navigator.of(context).pop();
+                            donePressed = true;
+                            Navigator.of(context).pop(true);
                           },
                           child: const Text("Done"),
                         ),
@@ -129,15 +129,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
           },
         );
       },
-    ).then((selectedUser) {
-      if (selectedUser != null) {
-        // Call the createWorkout method with the selected user
-        //service.createWorkout(sets, setRests, [selectedUser], _selectedDate);
-        //widget.updateSelectedWorkouts(
-        //widget.getWorkoutsForDay(widget.selectedDay));
-        Navigator.pop(context);
-      }
-    });
+    );
   }
 
   @override
@@ -152,7 +144,12 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
             onPressed: () {
               //TODO: Remove my id and instead give a list of assigned users
 
-              _showUserSelectionDialog(context);
+              _showUserSelectionDialog(context).then((_) {
+                if (donePressed) {
+                  Navigator.of(context).pop();
+                }
+              });
+
               //service.createWorkout(sets, setRests,
               //["hl8yydfqLzdcy0cdDp3R6F1Kckq1"], _selectedDate);
               widget.updateSelectedWorkouts(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:track_planner/auth.dart';
 import 'package:track_planner/create_workout.dart';
+import 'package:track_planner/log_workout.dart';
 import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
 import 'package:track_planner/utils/workout.dart';
@@ -203,114 +204,127 @@ class _CalendarState extends ConsumerState<Calendar> {
                                 //build workouts
                                 itemCount: value.length,
                                 itemBuilder: (context, index) {
-                                  return Card(
-                                    child: Wrap(
-                                      children: [
-                                        Container(
-                                          width: 600,
-                                          height: 400,
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child: ListView.builder(
-                                              //build sets
-                                              itemCount:
-                                                  value[index].sets.length,
-                                              itemBuilder: (context, setIndex) {
-                                                return Card(
-                                                  elevation: 2,
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        width: 600,
-                                                        height: 150,
-                                                        margin: const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                        ),
-                                                        child: ListView.builder(
-                                                          //build reps
-                                                          itemCount: value[
-                                                                  index]
-                                                              .sets[setIndex]
-                                                              .reps
-                                                              .length,
-                                                          itemBuilder: (context,
-                                                              repIndex) {
-                                                            return Card(
-                                                              elevation: 3,
-                                                              child: Container(
-                                                                margin: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        12,
-                                                                    vertical:
-                                                                        4),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              12),
+                                  return InkWell(
+                                    onTap: () => {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => LogWorkout(
+                                                  workout: value[index])))
+                                    },
+                                    child: Card(
+                                      child: Wrap(
+                                        children: [
+                                          Container(
+                                            width: 600,
+                                            height: 400,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(0.0),
+                                              child: ListView.builder(
+                                                //build sets
+                                                itemCount:
+                                                    value[index].sets.length,
+                                                itemBuilder:
+                                                    (context, setIndex) {
+                                                  return Card(
+                                                    elevation: 2,
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          width: 600,
+                                                          height: 150,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal: 8,
+                                                                  vertical: 4),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                          child:
+                                                              ListView.builder(
+                                                            //build reps
+                                                            itemCount: value[
+                                                                    index]
+                                                                .sets[setIndex]
+                                                                .reps
+                                                                .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    repIndex) {
+                                                              return Card(
+                                                                elevation: 3,
+                                                                child:
+                                                                    Container(
+                                                                  margin: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          4),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            12),
+                                                                  ),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                          "${repIndex + 1}",
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize:
+                                                                                16,
+                                                                          )),
+                                                                      const Divider(),
+                                                                      Row(
+                                                                        children: [
+                                                                          Text(
+                                                                              "${value[index].sets[setIndex].reps[repIndex].distance}m x ${value[index].sets[setIndex].reps[repIndex].numReps}"),
+                                                                          const SizedBox(
+                                                                            width:
+                                                                                50,
+                                                                          ),
+                                                                          const Icon(
+                                                                              Icons.timer),
+                                                                          Text(
+                                                                              "${value[index].sets[setIndex].reps[repIndex].repTime.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repTime.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repTime.inSeconds % 60}")
+                                                                        ],
+                                                                      ),
+                                                                      Text(
+                                                                          "Rest: ${value[index].sets[setIndex].reps[repIndex].repRest.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60}")
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(
-                                                                        "${repIndex + 1}",
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              16,
-                                                                        )),
-                                                                    const Divider(),
-                                                                    Row(
-                                                                      children: [
-                                                                        Text(
-                                                                            "${value[index].sets[setIndex].reps[repIndex].distance}m x ${value[index].sets[setIndex].reps[repIndex].numReps}"),
-                                                                        const SizedBox(
-                                                                          width:
-                                                                              50,
-                                                                        ),
-                                                                        const Icon(
-                                                                            Icons.timer),
-                                                                        Text(
-                                                                            //TODO change to repTime (How long to complete each rep)
-                                                                            "${value[index].sets[setIndex].reps[repIndex].repTime.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repTime.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repTime.inSeconds % 60}")
-                                                                      ],
-                                                                    ),
-                                                                    Text(
-                                                                        "Rest: ${value[index].sets[setIndex].reps[repIndex].repRest.inMinutes}:${value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60 == 0 ? "00" : value[index].sets[setIndex].reps[repIndex].repRest.inSeconds % 60}")
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
+                                                              );
+                                                            },
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },

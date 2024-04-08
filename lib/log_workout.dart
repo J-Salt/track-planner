@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/picker.dart';
+import 'package:track_planner/auth.dart';
+import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
 import 'package:track_planner/utils/workout.dart';
 
@@ -12,6 +14,9 @@ class LogWorkout extends StatefulWidget {
 }
 
 class _LogWorkoutState extends State<LogWorkout> {
+  int _selectedSet = 0;
+  int _selectedRep = 0;
+
   @override
   void initState() {
     super.initState();
@@ -22,87 +27,22 @@ class _LogWorkoutState extends State<LogWorkout> {
     super.dispose();
   }
 
-  Future<bool?> _showUserSelectionDialog(
-      BuildContext context, Rep selectedRep) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: SizedBox(
-            width: 200,
-            height: 550,
-            child: Column(
-              children: [
-                Text(
-                  "${selectedRep.distance} x ${selectedRep.numReps}",
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.builder(
-                      itemCount: int.parse(selectedRep.numReps),
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                      "${index + 1}: ${selectedRep.distance}m :"),
-                                  const SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      keyboardType: TextInputType.datetime,
-                                      decoration: InputDecoration(
-                                          icon: Icon(Icons.directions_run),
-                                          hintText: "MM:SS.SS"),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pop(); // Close dialog, return false
-                      },
-                      child: const Text("Cancel"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("Done"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ReusableAppBar(
         context: context,
         pageTitle: "Workout",
+        trailingActions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              Service().logWorkout(Auth().currentUser!.uid, widget.workout.id,
+                  widget.workout.sets);
+              Navigator.of(context).pop();
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -129,6 +69,11 @@ class _LogWorkoutState extends State<LogWorkout> {
                         return InkWell(
                           onTap: () async {
                             print("Set: $setIndex, Rep: $repIndex");
+                            setState(() {
+                              _selectedSet = setIndex;
+                              _selectedRep = repIndex;
+                            });
+
                             await _showUserSelectionDialog(context,
                                 widget.workout.sets[setIndex].reps[repIndex]);
                           },
@@ -143,11 +88,33 @@ class _LogWorkoutState extends State<LogWorkout> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("${repIndex + 1}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      )),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("${repIndex + 1}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
+                                      Icon(
+                                        Icons.check,
+                                        color: Colors.green.withOpacity(widget
+                                                    .workout
+                                                    .sets[setIndex]
+                                                    .reps[repIndex]
+                                                    .repRunTimes
+                                                    ?.length ==
+                                                int.parse(widget
+                                                    .workout
+                                                    .sets[setIndex]
+                                                    .reps[repIndex]
+                                                    .numReps)
+                                            ? 1
+                                            : 0),
+                                      )
+                                    ],
+                                  ),
                                   const Divider(),
                                   Row(
                                     children: [
@@ -180,55 +147,103 @@ class _LogWorkoutState extends State<LogWorkout> {
     );
   }
 
-  void onTap(String title) {
-    Picker(
-      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-        const NumberPickerColumn(begin: 0, end: 59, suffix: Text(' minutes')),
-        const NumberPickerColumn(
-            begin: 0, end: 55, suffix: Text(' seconds'), jump: 5),
-        const NumberPickerColumn(
-            begin: 0, end: 9, suffix: Text(' milliseconds'), jump: 1),
-      ]),
-      delimiter: <PickerDelimiter>[
-        PickerDelimiter(
-          child: Container(
-            width: 30.0,
-            alignment: Alignment.center,
-            child: const Text(
-              ":",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
+  Future<bool?> _showUserSelectionDialog(
+      BuildContext context, Rep selectedRep) async {
+    List<TextEditingController> controllers = List.generate(
+      int.parse(selectedRep.numReps),
+      (index) => TextEditingController(),
+    );
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: SizedBox(
+            width: 200,
+            height: 550,
+            child: Column(
+              children: [
+                Text(
+                  "${selectedRep.distance} x ${selectedRep.numReps}",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      itemCount: int.parse(selectedRep.numReps),
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                      "${index + 1}: ${selectedRep.distance}m :"),
+                                  SizedBox(
+                                    width: 130,
+                                    child: TextField(
+                                      controller: controllers[index],
+                                      keyboardType: TextInputType.datetime,
+                                      decoration: const InputDecoration(
+                                          icon: Icon(Icons.directions_run),
+                                          hintText: "MM:SS.SS"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pop(); // Close dialog, return false
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        List<Duration> times = controllers
+                            .map((c) => Service().parseDuration2(c.text))
+                            .toList();
+                        if (hasNonZeroDurations(times)) {
+                          setState(() {
+                            widget.workout.sets[_selectedSet].reps[_selectedRep]
+                                .repRunTimes = times;
+                          });
+                        }
+
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Done"),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ),
-        PickerDelimiter(
-          child: Container(
-            width: 30.0,
-            alignment: Alignment.center,
-            child: const Text(
-              ".",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        )
-      ],
-      hideHeader: true,
-      confirmText: 'OK',
-      confirmTextStyle:
-          const TextStyle(inherit: false, color: Colors.red, fontSize: 22),
-      title: Text(title),
-      selectedTextStyle: TextStyle(color: Colors.blue),
-      onConfirm: (Picker picker, List<int> value) {
-        // You get your duration here
-        Duration _duration = Duration(
-            minutes: picker.getSelectedValues()[0],
-            seconds: picker.getSelectedValues()[1]);
+        );
       },
-    ).showDialog(context);
+    );
+  }
+
+  bool hasNonZeroDurations(List<Duration> durations) {
+    //check if a list of durations contains all zeros
+    for (var duration in durations) {
+      if (duration != Duration.zero) {
+        return true;
+      }
+    }
+    return false;
   }
 }

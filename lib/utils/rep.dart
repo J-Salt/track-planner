@@ -22,8 +22,8 @@ class Rep extends StatefulWidget {
 class _RepState extends State<Rep> {
   String _distance = '';
   dynamic _numReps = '';
-  Duration _repRest = const Duration(seconds: 0);
-  Duration _repTime = const Duration(seconds: 0);
+  Duration _repRest = Duration.zero;
+  Duration _repTime = Duration.zero;
 
   List<DropdownMenuEntry> numRepsItems = [
     const DropdownMenuEntry(value: 1, label: "x1"),

@@ -167,7 +167,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
           return Set(
             index: index,
             reps: sets[index],
-            setRest: Duration(seconds: 0),
+            setRest: Duration.zero,
             onAddRep: () {
               setState(() {
                 sets[index].add({

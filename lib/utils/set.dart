@@ -23,7 +23,7 @@ class Set extends StatefulWidget {
 }
 
 class _SetState extends State<Set> {
-  Duration _setRest = const Duration(seconds: 0);
+  Duration _setRest = Duration.zero;
   @override
   Widget build(BuildContext context) {
     return Card(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'activities.dart';
 import 'profile.dart';
 import 'calendar.dart';
@@ -46,6 +47,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Geolocator.checkPermission().then((value) {
+      switch (value) {
+        case LocationPermission.denied:
+          Geolocator.requestPermission();
+        case LocationPermission.deniedForever:
+          Geolocator.requestPermission();
+        case LocationPermission.unableToDetermine:
+          Geolocator.requestPermission();
+        default:
+          print("Location status: $value");
+      }
+    });
+  }
+
   int currentPageIndex = 0;
   @override
   Widget build(BuildContext context) {

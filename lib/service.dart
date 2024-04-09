@@ -1,7 +1,5 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:firebase_database/firebase_database.dart';
+import 'package:track_planner/utils/weather_info.dart';
 import 'package:track_planner/utils/workout.dart';
 import 'package:uuid/uuid.dart';
 
@@ -90,7 +88,8 @@ class Service {
     }
   }
 
-  Future<void> logWorkout(String uid, String workoutId, List<Set> sets) async {
+  Future<void> logWorkout(
+      String uid, String workoutId, List<Set> sets, WeatherInfo weather) async {
     db = FirebaseDatabase.instance.ref("users/$uid/workouts/$workoutId/sets");
 
     List<Object> tempSets = [];
@@ -120,6 +119,13 @@ class Service {
     }
 
     await db.set(tempSets);
+    db =
+        FirebaseDatabase.instance.ref("users/$uid/workouts/$workoutId/weather");
+    Map<String, dynamic> weatherMap = {
+      "weather": weather.weather,
+      "temp": weather.temp,
+    };
+    await db.update(weatherMap);
   }
 
   Future<Map<DateTime, List<Workout>>> getWorkouts(String uid) async {
@@ -220,22 +226,5 @@ class Service {
     } else {
       return Duration.zero;
     }
-  }
-
-  // TODO add all fields
-  void logActivity(String title, String desc, List<Object> sets) async {
-    var uuid = const Uuid();
-    List<String> setIds = [];
-
-    for (Object set in sets) {
-      String id = uuid.v4();
-      db = FirebaseDatabase.instance.ref("sets/$id");
-      await db.set(set);
-      setIds.add(id);
-    }
-
-    db = FirebaseDatabase.instance.ref("activities/${uuid.v4()}");
-
-    await db.set({"title": title, "description": desc, "sets": setIds});
   }
 }

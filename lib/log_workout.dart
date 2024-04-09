@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:track_planner/auth.dart';
 import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
+import 'package:track_planner/utils/weather_info.dart';
 import 'package:track_planner/utils/workout.dart';
 
 class LogWorkout extends StatefulWidget {
@@ -35,10 +40,17 @@ class _LogWorkoutState extends State<LogWorkout> {
         pageTitle: "Workout",
         trailingActions: [
           IconButton(
+            icon: const Icon(Icons.cloud),
+            onPressed: () async {
+              await fetchWeather();
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.check),
-            onPressed: () {
+            onPressed: () async {
+              WeatherInfo weather = await fetchWeather();
               Service().logWorkout(Auth().currentUser!.uid, widget.workout.id,
-                  widget.workout.sets);
+                  widget.workout.sets, weather);
               Navigator.of(context).pop();
             },
           )
@@ -145,6 +157,62 @@ class _LogWorkoutState extends State<LogWorkout> {
         ),
       ),
     );
+  }
+
+  Future<WeatherInfo> fetchWeather() async {
+    await Geolocator.checkPermission().then((value) {
+      switch (value) {
+        case LocationPermission.denied:
+          Geolocator.requestPermission();
+        case LocationPermission.deniedForever:
+          Geolocator.requestPermission();
+        case LocationPermission.unableToDetermine:
+          Geolocator.requestPermission();
+        default:
+          print("Location status: $value");
+      }
+    });
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    String url =
+        "https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&current=temperature_2m,precipitation,wind_speed_10m,wind_gusts_10m,cloud_cover,snowfall&temperature_unit=fahrenheit&wind_speed_unit=ms&precipitation_unit=inch";
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      //Gather data
+      Map<String, dynamic> weatherData = jsonDecode(response.body);
+
+      Map<String, dynamic> currentWeather = weatherData["current"];
+      double windSpeed =
+          currentWeather["wind_speed_10m"] ?? -1; //Wind speed in m/s
+      double windGusts =
+          currentWeather["wind_gusts_10m"] ?? -1; //Gust speed in m/s
+      double temp = currentWeather["temperature_2m"] ?? -1; //Temp in fahrenheit
+      double precipitation = currentWeather["precipitation"] ??
+          -1; //Inches of rain in the last hour
+      int clouds = currentWeather["cloud_cover"] ?? -1; //Percent cloud cover
+      double snow = currentWeather["snowfall"] ??
+          -1; //Inches of snowfall in the last hour
+
+      //Translate weather data into simple categories and temperature.
+      if (windSpeed >= 18 || windGusts >= 24) {
+        return WeatherInfo(temp: temp, weather: "windy");
+      }
+      if (precipitation > 0.1) return WeatherInfo(temp: temp, weather: "rainy");
+      if (snow > 0.1) return WeatherInfo(temp: temp, weather: "snowy");
+      if (clouds >= 50) {
+        return WeatherInfo(temp: temp, weather: "cloudy");
+      } else if (clouds >= 20) {
+        return WeatherInfo(temp: temp, weather: "partly-cloudy");
+      } else {
+        return WeatherInfo(temp: temp, weather: "sunny");
+      }
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return WeatherInfo(temp: -1, weather: "na");
+    }
   }
 
   Future<bool?> _showUserSelectionDialog(

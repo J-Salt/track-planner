@@ -87,6 +87,12 @@ class Service {
       db.set(finalWorkout);
     }
   }
+  void addFriend(String uid, List<String> availableFriends) {
+    for (String userId in availableFriends){
+      db = FirebaseDatabase.instance.ref("users/$uid/friends/$userId");
+      db.set(userId);
+    }
+  }
 
   Future<void> logWorkout(
       String uid, String workoutId, List<Set> sets, WeatherInfo weather) async {

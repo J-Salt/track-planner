@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:track_planner/utils/workout.dart';
+import 'package:track_planner/service.dart';
 
 class WorkoutSummary extends StatelessWidget {
-  
-  final String totalDistance;
-  final String time;
-  final String notes;
-  final void Function()? onPressed;
-  const WorkoutSummary({
-    super.key,
-    required this.totalDistance,
-    required this.time,
-    required this.notes,
-    required this.onPressed,
-  });
+  const WorkoutSummary({super.key, required this.workout});
+  final Workout workout;
+
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +44,9 @@ class WorkoutSummary extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text('Total Distance:'),
               Text(
-                'Total Distance:'
-              ),
-              Text(
-                totalDistance,
+                workout.totalDistance,
                 style: TextStyle(
                   fontSize: 20
                 )
@@ -65,9 +56,9 @@ class WorkoutSummary extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Time:'),
+              Text('Total Time:'),
               Text(
-                time,
+                workout.totalTime.toString(),
                 style: TextStyle(
                   fontSize: 20
                 )
@@ -78,12 +69,13 @@ class WorkoutSummary extends StatelessWidget {
             children: [
               Text('Notes:'),
               Text(
-                notes,
+                workout.notes,
                 style: TextStyle(
                   fontSize: 20
                 ),
                 textAlign: TextAlign.center,
               ),
+              Text(workout.date.toString()),
             ],
           ),       
         ],

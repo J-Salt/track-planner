@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:track_planner/utils/workout.dart';
+
 
 class SetSummary extends StatelessWidget {
-  
-  final void Function()? onPressed;
-  const SetSummary({
-    super.key,
-    required this.onPressed,
-  });
+  final int setNumber;
+  final Set set;
+  const SetSummary({super.key, required this.set, required this.setNumber});
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,20 +18,23 @@ class SetSummary extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // summary and edit button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Set #',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[500]
-                ),
-              ),
-            ],
+          Text(
+            'Set $setNumber',
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey[500]
+            ),
+          ),
+          ListView.builder(
+            itemCount: set.reps.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: const Icon(Icons.lock_clock),
+                title: Text(set.reps[index].distance),
+                trailing: Text(set.reps[index].repRunTimes![index].toString()),
+              );
+            },
           ),
         ],
       ),

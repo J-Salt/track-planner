@@ -87,8 +87,9 @@ class Service {
       db.set(finalWorkout);
     }
   }
+
   void addFriend(String uid, List<String> availableFriends) {
-    for (String userId in availableFriends){
+    for (String userId in availableFriends) {
       db = FirebaseDatabase.instance.ref("users/$uid/friends/$userId");
       db.set(userId);
     }
@@ -189,7 +190,7 @@ class Service {
     return workouts;
   }
 
-  Future<List<Workout>> getFriendsWorkouts(String uid) async {
+  Future<List<DisplayWorkout>> getFriendsWorkouts(String uid) async {
     List<DisplayWorkout> workouts = [];
 
     db = FirebaseDatabase.instance.ref("users/$uid/friends");
@@ -262,7 +263,10 @@ class Service {
         });
       }
     }
-    return [];
+    workouts.sort((a, b) {
+      return a.date.compareTo(b.date);
+    });
+    return workouts;
   }
 
   Duration parseDuration(String s) {

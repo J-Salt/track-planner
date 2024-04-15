@@ -189,6 +189,82 @@ class Service {
     return workouts;
   }
 
+  Future<List<Workout>> getFriendsWorkouts(String uid) async {
+    List<DisplayWorkout> workouts = [];
+
+    db = FirebaseDatabase.instance.ref("users/$uid/friends");
+    List<Object?> friendsIds = (await db.get()).value as List<Object?>;
+    for (Object? id in friendsIds) {
+      String strId = id.toString();
+      db = FirebaseDatabase.instance.ref();
+      DataSnapshot snapshot = await db
+          .child('users')
+          .child(strId)
+          .orderByChild('workouts')
+          .limitToFirst(10) // Limit the number of workouts
+          .get();
+      if (snapshot.value == null) continue;
+      final Map<Object?, Object?> userMap =
+          snapshot.value as Map<Object?, Object?>;
+      if (userMap['workouts'] != null) {
+        String name = userMap['name'].toString();
+        //TODO get weather
+
+        (userMap['workouts'] as Map<Object?, Object?>).forEach((key, workout) {
+          dynamic sets = (workout as Map<Object?, Object?>)["sets"];
+          String weather = "";
+          String temp = "";
+          if (workout['weather'] != null) {
+            weather = (workout['weather'] as Map)['weather'].toString();
+            temp = (workout['weather'] as Map)['temp'].toString();
+          }
+
+          List<Set> tempSets = [];
+          for (Map<Object?, Object?> set in sets) {
+            List<Rep> tempReps = [];
+            Duration setRest = parseDuration(set["setRest"].toString());
+            dynamic reps = set["reps"] ?? [];
+
+            for (Map<Object?, Object?> rep in reps) {
+              List<Duration> tempRepRunTimes = [];
+              if (rep["repRunTimes"] != null) {
+                for (Object? time in (rep["repRunTimes"] as List<Object?>)) {
+                  tempRepRunTimes.add(parseDuration2(time.toString()));
+                }
+              } else {
+                tempRepRunTimes = [];
+              }
+              tempReps.add(
+                Rep(
+                  distance: rep["distance"].toString(),
+                  numReps: rep["numReps"].toString(),
+                  repRest: parseDuration(rep["repRest"].toString()),
+                  repTime: parseDuration(rep["repTime"].toString()),
+                  repRunTimes: tempRepRunTimes,
+                ),
+              );
+            }
+            tempSets.add(Set(reps: tempReps, setRest: setRest));
+          }
+          DateTime date = DateTime.parse(workout["date"].toString());
+
+          date = DateTime(date.year, date.month, date.day)
+              .toUtc()
+              .subtract(Duration(hours: 4));
+
+          workouts.add(DisplayWorkout(
+              id: key.toString(),
+              date: date,
+              sets: tempSets,
+              name: name,
+              weather: weather,
+              temp: temp));
+        });
+      }
+    }
+    return [];
+  }
+
   Duration parseDuration(String s) {
     List<String> timeParts = s.split(':');
     if (s == "null" || s == "" || null == s) return Duration.zero;

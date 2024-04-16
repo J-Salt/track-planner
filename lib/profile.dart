@@ -10,7 +10,7 @@ import 'package:track_planner/utils/user_text_box.dart';
 import 'package:track_planner/service.dart';
 
 class Profile extends ConsumerStatefulWidget {
-
+  const Profile({super.key});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -20,7 +20,14 @@ class _ProfileState extends ConsumerState<Profile> {
   late final ValueNotifier<List<Map<String, dynamic>>> _friends;
   bool donePressed = false;
 
-@override
+  //user
+  final currentUser = FirebaseAuth.instance.currentUser!;
+  
+  
+  //edit field
+  Future<void> editField(String field) async {
+  }
+  @override
   void initState() {
     super.initState();
     handleGetFriends();
@@ -34,7 +41,9 @@ class _ProfileState extends ConsumerState<Profile> {
 
   void handleGetFriends() {
     service.getAthletesForAssignment().then((value) {
-      _friends = ValueNotifier(value);
+      setState(() {
+        _friends = ValueNotifier(value);
+      });
     });
   }
 
@@ -96,8 +105,7 @@ class _ProfileState extends ConsumerState<Profile> {
                         ElevatedButton(
                           onPressed: () {
                             donePressed = false;
-                            Navigator.of(context)
-                                .pop(false); // Close dialog, return false
+                            Navigator.of(context).pop(false); // Close dialog, return false
                           },
                           child: const Text("Cancel"),
                         ),
@@ -106,7 +114,6 @@ class _ProfileState extends ConsumerState<Profile> {
                             List<String> assignedFriendsIds = _assignFrends(_friends.value);
                             service.addFriend(currentUser.uid, assignedFriendsIds);
                             donePressed = true;
-                            Navigator.of(context).pop(true);
                           },
                           child: const Text("Done"),
                         ),
@@ -122,36 +129,28 @@ class _ProfileState extends ConsumerState<Profile> {
     );
   }
 
-  //user
-  final currentUser = FirebaseAuth.instance.currentUser!;
-  
-  //edit field
-  Future<void> editField(String field) async {
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ReusableAppBar(
         pageTitle: "Profile",
         context: context,
-        leadingActions: IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            _showUserSelectionDialog(context).then((_) {
+        leadingActions:
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              _showUserSelectionDialog(context).then((_) {
                 if (donePressed) {
                   Navigator.of(context).pop();
                 }
               });
-          },
-        ),
-        
+            },
+          ),
         trailingActions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
           )
-
         ],
       ),
       body: ListView(
@@ -182,7 +181,7 @@ class _ProfileState extends ConsumerState<Profile> {
 
           //username
           UserTextBox(
-            text: 'Lleyton Winslow', 
+            text: 'c', 
             sectionName: 'Name',
             onPressed: () => editField('Name'),
           ),

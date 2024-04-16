@@ -114,6 +114,7 @@ class _ProfileState extends ConsumerState<Profile> {
                             List<String> assignedFriendsIds = _assignFrends(_friends.value);
                             service.addFriend(currentUser.uid, assignedFriendsIds);
                             donePressed = true;
+                            Navigator.of(context).pop(true);
                           },
                           child: const Text("Done"),
                         ),
@@ -140,9 +141,7 @@ class _ProfileState extends ConsumerState<Profile> {
             icon: const Icon(Icons.add),
             onPressed: () {
               _showUserSelectionDialog(context).then((_) {
-                if (donePressed) {
-                  Navigator.of(context).pop();
-                }
+                
               });
             },
           ),

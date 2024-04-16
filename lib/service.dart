@@ -87,11 +87,11 @@ class Service {
       db.set(finalWorkout);
     }
   }
-  void addFriend(String uid, List<String> availableFriends) {
-    for (String userId in availableFriends){
-      db = FirebaseDatabase.instance.ref("users/$uid/friends/$userId");
-      db.set(userId);
-    }
+  void addFriend(String uid, List<String> friends) {
+
+    db = FirebaseDatabase.instance.ref("users/$uid/friends/");
+    db.set(friends);
+    
   }
 
   Future<void> logWorkout(

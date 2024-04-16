@@ -10,25 +10,44 @@ class Workout {
     required this.sets,
   });
 
-  String get totalDistance{
+  String get totalDistance {
     int totalDistance = 0;
-    for (Set set in sets){
-      for (Rep rep in set.reps){
+    for (Set set in sets) {
+      for (Rep rep in set.reps) {
         totalDistance += int.parse(rep.distance);
       }
     }
     return totalDistance.toString();
   }
 
-    Duration get totalTime{
-      Duration totalTime = Duration();
-      for (Set set in sets){
-        for (Rep rep in set.reps){
-          totalTime += rep.repTime;
-        }
+  Duration get totalTime {
+    Duration totalTime = Duration();
+    for (Set set in sets) {
+      for (Rep rep in set.reps) {
+        totalTime += rep.repTime;
       }
-      return totalTime;
     }
+    return totalTime;
+  }
+}
+
+///For activities view, workout object includes information about the user.
+class DisplayWorkout {
+  final DateTime date;
+  final String id;
+  final List<Set> sets;
+  final String notes = '';
+  final String name;
+  final String temp;
+  final String weather;
+
+  DisplayWorkout(
+      {required this.id,
+      required this.date,
+      required this.sets,
+      required this.name,
+      required this.temp,
+      required this.weather});
 }
 
 class Set {
@@ -38,7 +57,6 @@ class Set {
     required this.setRest,
     required this.reps,
   });
-
 }
 
 class Rep {

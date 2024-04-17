@@ -13,6 +13,7 @@ class Activities extends StatefulWidget {
   _ActivitiesState createState() => _ActivitiesState();
 }
 
+//TODO workouts in reverse cronological order from how they should be. i.e. most recent first.
 class _ActivitiesState extends State<Activities> {
   late Future<List<DisplayWorkout>> _friends_activites;
   static List<PreviewWorkout> workouts = [];

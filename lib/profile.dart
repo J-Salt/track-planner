@@ -11,6 +11,8 @@ import 'package:track_planner/service.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
+  
+  
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -19,11 +21,13 @@ class _ProfileState extends ConsumerState<Profile> {
   Service service = Service();
   late final ValueNotifier<List<Map<String, dynamic>>> _friends;
   bool donePressed = false;
+  String name = '';
+  String gradYear = '';
+  String eventGroup = '';
 
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
-  
-  
+
   //edit field
   Future<void> editField(String field) async {
   }
@@ -31,6 +35,7 @@ class _ProfileState extends ConsumerState<Profile> {
   void initState() {
     super.initState();
     handleGetFriends();
+    getUserStuff(currentUser.uid);
   }
 
   void _logout(BuildContext context) {
@@ -45,6 +50,18 @@ class _ProfileState extends ConsumerState<Profile> {
         _friends = ValueNotifier(value);
       });
     });
+  }
+
+  void getUserStuff(String uid) {
+    service.getUser(uid).then(
+      (value) {
+        setState(() {
+          name =  value["name"].toString();
+          gradYear = value["gradYear"].toString();
+          eventGroup = value["eventGroup"].toString();
+        });
+      }
+    );
   }
 
   List<String> _assignFrends(List<Map<String, dynamic>> athletes) {
@@ -132,6 +149,7 @@ class _ProfileState extends ConsumerState<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    getUserStuff(currentUser.uid);
     return Scaffold(
       appBar: ReusableAppBar(
         pageTitle: "Profile",
@@ -141,7 +159,7 @@ class _ProfileState extends ConsumerState<Profile> {
             icon: const Icon(Icons.add),
             onPressed: () {
               _showUserSelectionDialog(context).then((_) {
-                
+
               });
             },
           ),
@@ -180,20 +198,20 @@ class _ProfileState extends ConsumerState<Profile> {
 
           //username
           UserTextBox(
-            text: 'c', 
+            text: name, 
             sectionName: 'Name',
             onPressed: () => editField('Name'),
           ),
           
           //bio
           UserTextBox(
-            text: '2024', 
+            text: gradYear, 
             sectionName: 'Graduation Year',
             onPressed: () => editField('Graduation Year'),
           ),
 
           UserTextBox(
-            text: 'Middle Distance', 
+            text: eventGroup, 
             sectionName: 'Event Group',
             onPressed: () => editField('Event Group'),
           ),

@@ -5,10 +5,13 @@ import 'package:track_planner/utils/reusable_appbar.dart';
 import 'package:track_planner/utils/workout.dart';
 
 class Activities extends StatelessWidget {
-  const Activities({super.key});
+  static List<DisplayWorkout> friends_activites = [];
+  static List<PreviewWorkout> workouts = [];
+  Activities({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Future<List<DisplayWorkout>> _friends_activites = Service().getFriendsWorkouts("OzsRkaJIeddj2CX2SSx0jeamGmC3");
     return Scaffold(
       appBar: ReusableAppBar(
         pageTitle: "Activities",
@@ -16,18 +19,35 @@ class Activities extends StatelessWidget {
         trailingActions: [
           IconButton(
               onPressed: () async {
-                Service().getFriendsWorkouts("OzsRkaJIeddj2CX2SSx0jeamGmC3");
+                _friends_activites = Service().getFriendsWorkouts("OzsRkaJIeddj2CX2SSx0jeamGmC3");
               },
               icon: Icon(Icons.person))
         ],
       ),
-      body: Center(
-        child: ListView(
-          children: const <Widget>[
-            // PreviewWorkout(),
-          ],
+      body: Expanded(
+        child: FutureBuilder(
+          future: _friends_activites,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text("Error loading data"),
+              );
+            } else {
+              friends_activites = snapshot.data!;
+              for (DisplayWorkout activity in friends_activites) {
+                workouts.add(PreviewWorkout(workout: activity));
+              }
+              return Column(
+                  children: workouts
+              );
+            };
+          }
         ),
-      ),
+      )
     );
   }
 }

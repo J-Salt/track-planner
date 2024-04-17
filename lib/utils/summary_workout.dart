@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:track_planner/utils/workout.dart';
 import 'package:track_planner/service.dart';
 
 class WorkoutSummary extends StatelessWidget {
   const WorkoutSummary({super.key, required this.workout});
-  final Workout workout;
+  final DisplayWorkout workout;
 
 
   @override
@@ -15,38 +17,24 @@ class WorkoutSummary extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // summary and edit button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Workout Summary',
-                style: TextStyle(
-                  fontSize: 30,
-                ),
-              ),
-
-              IconButton(
-                onPressed: (){},
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.grey[400],
-                ),
-              ),
-            ],
+          Text(
+            'Workout Summary',
+            style: TextStyle(
+              fontSize: 20,
+            ),
           ),
-
           // details
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Total Distance:'),
               Text(
-                workout.totalDistance,
+                '${workout.totalDistance} Meters',
                 style: TextStyle(
                   fontSize: 20
                 )
@@ -58,26 +46,23 @@ class WorkoutSummary extends StatelessWidget {
             children: [
               Text('Total Time:'),
               Text(
-                workout.totalTime.toString(),
+                '${workout.totalTime.inMinutes.toString()} minutes',
                 style: TextStyle(
                   fontSize: 20
                 )
               ),
             ],
           ),
-          Column(
-            children: [
-              Text('Notes:'),
-              Text(
-                workout.notes,
-                style: TextStyle(
-                  fontSize: 20
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Text(workout.date.toString()),
-            ],
-          ),       
+          Text('Notes:'),
+          Text(
+            workout.notes,
+            style: TextStyle(
+              fontSize: 20
+            ),
+            textAlign: TextAlign.right,
+          ),
+          Text('Date: ' + workout.date.toIso8601String()),
+          Text('Athlete Name: ' + workout.name)       
         ],
       ),
     );

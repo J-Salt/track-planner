@@ -3,13 +3,14 @@ import 'package:track_planner/utils/workout.dart';
 import 'package:track_planner/view_workout.dart';
 
 class PreviewWorkout extends StatelessWidget {
-  final Workout workout;
+  final DisplayWorkout workout;
   const PreviewWorkout({super.key, required this.workout});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
+    return Container(
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
       child: GestureDetector(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ViewWorkout(workout: workout))),
         child: Container(
@@ -22,26 +23,13 @@ class PreviewWorkout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // summary and edit button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Workout Summary',
-                    style: TextStyle(
-                      fontSize: 30,
-                    ),
-                  ),
-
-                  IconButton(
-                    onPressed: (){},
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                ],
+              Text(
+                "${workout.name}'s Workout",
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+                textAlign: TextAlign.center,
               ),
-
               // details
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +38,7 @@ class PreviewWorkout extends StatelessWidget {
                     'Total Distance:'
                   ),
                   Text(
-                    workout.totalDistance,
+                    '${workout.totalDistance} Meters',
                     style: TextStyle(
                       fontSize: 20
                     )
@@ -62,13 +50,14 @@ class PreviewWorkout extends StatelessWidget {
                 children: [
                   Text('Total Time:'),
                   Text(
-                    workout.totalTime.toString(),
+                    '${workout.totalTime.inMinutes.toString()} Minutes',
                     style: TextStyle(
                       fontSize: 20
                     )
                   ),
                 ],
               ),
+              Text('Date: ${workout.date.toIso8601String()}')
             ],
           ),
         )

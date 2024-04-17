@@ -48,6 +48,27 @@ class DisplayWorkout {
       required this.name,
       required this.temp,
       required this.weather});
+  String get totalDistance {
+    int totalDistance = 0;
+    for (Set set in sets) {
+      for (Rep rep in set.reps) {
+        totalDistance += int.parse(rep.distance) * int.parse(rep.numReps);
+      }
+    }
+    return totalDistance.toString();
+  }
+
+  Duration get totalTime {
+    Duration totalTime = Duration();
+    for (Set set in sets) {
+      totalTime += set.setRest;
+      for (Rep rep in set.reps) {
+        totalTime += rep.repTime * int.parse(rep.numReps);
+        totalTime += rep.repRest;
+      }
+    }
+    return totalTime;
+  }
 }
 
 class Set {

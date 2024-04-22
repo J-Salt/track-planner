@@ -229,6 +229,8 @@ class Service {
           snapshot.value as Map<Object?, Object?>;
       if (userMap['workouts'] != null) {
         String name = userMap['name'].toString();
+        if ((userMap['workouts'] as Map)["completed"] == null ||
+            (userMap['workouts'] as Map)["completed"] == false) continue;
 
         (userMap['workouts'] as Map<Object?, Object?>).forEach((key, workout) {
           dynamic sets = (workout as Map<Object?, Object?>)["sets"];

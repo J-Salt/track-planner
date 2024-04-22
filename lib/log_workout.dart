@@ -80,7 +80,6 @@ class _LogWorkoutState extends State<LogWorkout> {
                       itemBuilder: (context, repIndex) {
                         return InkWell(
                           onTap: () async {
-                            print("Set: $setIndex, Rep: $repIndex");
                             setState(() {
                               _selectedSet = setIndex;
                               _selectedRep = repIndex;
@@ -169,6 +168,7 @@ class _LogWorkoutState extends State<LogWorkout> {
         case LocationPermission.unableToDetermine:
           Geolocator.requestPermission();
         default:
+          //low budget logging
           print("Location status: $value");
       }
     });
@@ -210,7 +210,7 @@ class _LogWorkoutState extends State<LogWorkout> {
       }
     } else {
       // If the server did not return a 200 OK response,
-      // then throw an exception.
+      // then set values to check for later
       return WeatherInfo(temp: -1, weather: "na");
     }
   }

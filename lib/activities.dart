@@ -13,7 +13,6 @@ class Activities extends StatefulWidget {
   _ActivitiesState createState() => _ActivitiesState();
 }
 
-//TODO workouts in reverse cronological order from how they should be. i.e. most recent first.
 class _ActivitiesState extends State<Activities> {
   late Future<List<DisplayWorkout>> _friends_activites;
   static List<PreviewWorkout> workouts = [];
@@ -36,32 +35,33 @@ class _ActivitiesState extends State<Activities> {
           pageTitle: "Activities",
           context: context,
         ),
-        body: Expanded(
-          child: FutureBuilder(
-              future: _friends_activites,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("Error loading data"),
-                  );
-                } else {
-                  List<DisplayWorkout> friends_activites =
-                      snapshot.data as List<DisplayWorkout>;
-                  workouts = [];
-                  for (DisplayWorkout activity in friends_activites) {
-                    workouts.add(PreviewWorkout(workout: activity));
-                  }
-                  return ListView(
-                    shrinkWrap: true,
-                    children: workouts,
-                  );
+        body: FutureBuilder(
+            future: _friends_activites,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text("Error loading data"),
+                );
+              } else if (snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text("No Workouts", style: TextStyle(fontSize: 24)),
+                );
+              } else {
+                List<DisplayWorkout> friends_activites =
+                    snapshot.data as List<DisplayWorkout>;
+                workouts = [];
+                for (DisplayWorkout activity in friends_activites) {
+                  workouts.add(PreviewWorkout(workout: activity));
                 }
-                ;
-              }),
-        ));
+                return ListView(
+                  shrinkWrap: true,
+                  children: workouts,
+                );
+              }
+            }));
   }
 }

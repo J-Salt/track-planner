@@ -11,8 +11,7 @@ import 'package:track_planner/service.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
-  
-  
+
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -24,13 +23,13 @@ class _ProfileState extends ConsumerState<Profile> {
   String name = '';
   String gradYear = '';
   String eventGroup = '';
+  User user = Auth().currentUser!;
 
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   //edit field
-  Future<void> editField(String field) async {
-  }
+  Future<void> editField(String field) async {}
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,7 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   void handleGetFriends() {
-    service.getAthletesForAssignment().then((value) {
+    service.getAthletesForAssignment(user.uid).then((value) {
       setState(() {
         _friends = ValueNotifier(value);
       });
@@ -53,18 +52,16 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   void getUserStuff(String uid) {
-    service.getUser(uid).then(
-      (value) {
-        setState(() {
-          name =  value["name"].toString();
-          gradYear = value["gradYear"].toString();
-          eventGroup = value["eventGroup"].toString();
-        });
-      }
-    );
+    service.getUser(uid).then((value) {
+      setState(() {
+        name = value["name"].toString();
+        gradYear = value["gradYear"].toString();
+        eventGroup = value["eventGroup"].toString();
+      });
+    });
   }
 
-  List<String> _assignFrends(List<Map<String, dynamic>> athletes) {
+  List<String> _assignFriends(List<Map<String, dynamic>> athletes) {
     List<String> assignedFriendsIds = [];
     for (Map<String, dynamic> athlete in athletes) {
       if (athlete["selected"] == true) {
@@ -73,7 +70,7 @@ class _ProfileState extends ConsumerState<Profile> {
     }
     return assignedFriendsIds;
   }
-  
+
   Future<bool?> _showUserSelectionDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -122,14 +119,17 @@ class _ProfileState extends ConsumerState<Profile> {
                         ElevatedButton(
                           onPressed: () {
                             donePressed = false;
-                            Navigator.of(context).pop(false); // Close dialog, return false
+                            Navigator.of(context)
+                                .pop(false); // Close dialog, return false
                           },
                           child: const Text("Cancel"),
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            List<String> assignedFriendsIds = _assignFrends(_friends.value);
-                            service.addFriend(currentUser.uid, assignedFriendsIds);
+                            List<String> assignedFriendsIds =
+                                _assignFriends(_friends.value);
+                            service.addFriends(
+                                currentUser.uid, assignedFriendsIds);
                             donePressed = true;
                             Navigator.of(context).pop(true);
                           },
@@ -151,72 +151,68 @@ class _ProfileState extends ConsumerState<Profile> {
   Widget build(BuildContext context) {
     getUserStuff(currentUser.uid);
     return Scaffold(
-      appBar: ReusableAppBar(
-        pageTitle: "Profile",
-        context: context,
-        leadingActions:
-          IconButton(
+        appBar: ReusableAppBar(
+          pageTitle: "Profile",
+          context: context,
+          leadingActions: IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              _showUserSelectionDialog(context).then((_) {
-
-              });
+              _showUserSelectionDialog(context).then((_) {});
             },
           ),
-        trailingActions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _logout(context),
-          )
-        ],
-      ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 50),
-          
-          //profile pic
-          Icon(
-            Icons.person,
-            size: 72,
-          ),
-          
-          const SizedBox(height: 10),
+          trailingActions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () => _logout(context),
+            )
+          ],
+        ),
+        body: ListView(
+          children: [
+            const SizedBox(height: 50),
 
-          //user email
-          Text(
-            currentUser.email!,
-            textAlign: TextAlign.center,
-          ),
+            //profile pic
+            Icon(
+              Icons.person,
+              size: 72,
+            ),
 
-          const SizedBox(height: 50),
+            const SizedBox(height: 10),
 
-          //user details
-          Padding(
-            padding:  const EdgeInsets.all(8.0),
-            child: Text('My Details'),
-          ),
+            //user email
+            Text(
+              currentUser.email!,
+              textAlign: TextAlign.center,
+            ),
 
-          //username
-          UserTextBox(
-            text: name, 
-            sectionName: 'Name',
-            onPressed: () => editField('Name'),
-          ),
-          
-          //bio
-          UserTextBox(
-            text: gradYear, 
-            sectionName: 'Graduation Year',
-            onPressed: () => editField('Graduation Year'),
-          ),
+            const SizedBox(height: 50),
 
-          UserTextBox(
-            text: eventGroup, 
-            sectionName: 'Event Group',
-            onPressed: () => editField('Event Group'),
-          ),
-        ],
-      )
-    );
+            //user details
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('My Details'),
+            ),
+
+            //username
+            UserTextBox(
+              text: name,
+              sectionName: 'Name',
+              onPressed: () => editField('Name'),
+            ),
+
+            //bio
+            UserTextBox(
+              text: gradYear,
+              sectionName: 'Graduation Year',
+              onPressed: () => editField('Graduation Year'),
+            ),
+
+            UserTextBox(
+              text: eventGroup,
+              sectionName: 'Event Group',
+              onPressed: () => editField('Event Group'),
+            ),
+          ],
+        ));
   }
 }

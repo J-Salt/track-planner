@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:track_planner/auth.dart';
 import 'package:track_planner/calendar.dart';
 import 'package:track_planner/service.dart';
 import 'package:track_planner/utils/reusable_appbar.dart';
@@ -23,7 +25,6 @@ class CreateWorkout extends ConsumerStatefulWidget {
 }
 
 //TODO workouts being created for the wrong day
-//TODO No way of knowing if a workout is completed
 
 class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
   Service service = Service();
@@ -32,17 +33,17 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
   late DateTime _selectedDate;
   late final ValueNotifier<List<Map<String, dynamic>>> _athletes;
   bool donePressed = false;
+  User user = Auth().currentUser!;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     handleGetAthletes();
     _selectedDate = ref.read(selectedDayProvider);
   }
 
   void handleGetAthletes() {
-    service.getAthletesForAssignment().then((value) {
+    service.getAthletesForAssignment(user.uid).then((value) {
       setState(() {
         _athletes = ValueNotifier(value);
       });
@@ -158,8 +159,8 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
               widget.updateSelectedWorkouts(
                   widget.getWorkoutsForDay(widget.selectedDay));
 
-              //Navigator.pop(context);
-              //UPDATE _selectedWorkouts = _getWorkoutsForDay(_selectedDay) HERE
+              widget.updateSelectedWorkouts(
+                  widget.getWorkoutsForDay(widget.selectedDay));
             },
           ),
         ],

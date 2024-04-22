@@ -69,7 +69,11 @@ class _CalendarState extends ConsumerState<Calendar> {
     service.getUser(uid).then(
       (value) {
         setState(() {
-          _isCoach = value["isCoach"] as bool;
+          if (value["isCoach"] == null) {
+            _isCoach = false;
+          } else {
+            _isCoach = value["isCoach"] as bool;
+          }
         });
       },
     );

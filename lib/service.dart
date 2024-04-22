@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:intl/intl.dart';
 import 'package:track_planner/utils/weather_info.dart';
 import 'package:track_planner/utils/workout.dart';
 import 'package:uuid/uuid.dart';
@@ -30,27 +32,31 @@ class Service {
     return snapshot.value as Map<Object?, Object?>;
   }
 
-  Future<List<Map<String, dynamic>>> getAthletesForAssignment() async {
+  Future<List<Map<String, dynamic>>> getAthletesForAssignment(
+      String uid) async {
     db = FirebaseDatabase.instance.ref("users");
     DatabaseEvent snapshot =
         await db.orderByChild("isCoach").equalTo(false).once();
 
     List<Map<String, dynamic>> out = [];
+    if (snapshot.snapshot.value == null) return [];
     Map<Object?, Object?> temp =
         snapshot.snapshot.value as Map<Object?, Object?>;
     Map<String, dynamic> tempMap = {};
     temp.forEach((key, value) {
-      Map<Object?, Object?> t = value as Map<Object?, Object?>;
-      tempMap = {
-        "id": key,
-        "name": value["name"] ?? "",
-        "gradYear": value["gradYear"] ?? 0,
-        "eventGroup": value["eventGroup"] ?? "",
-        "isCoach": value["isCoach"],
-        "selected": false,
-      };
-      out.add(tempMap);
+      if (key != uid) {
+        tempMap = {
+          "id": key,
+          "name": (value as Map)["name"] ?? "",
+          "gradYear": value["gradYear"] ?? 0,
+          "eventGroup": value["eventGroup"] ?? "",
+          "isCoach": value["isCoach"],
+          "selected": false,
+        };
+        out.add(tempMap);
+      }
     });
+
     return out;
   }
 
@@ -79,6 +85,7 @@ class Service {
       tempSets.add(currentSet);
     }
     finalWorkout["sets"] = tempSets;
+    finalWorkout["completed"] = false;
     finalWorkout["date"] = date.toString();
 
     //assign the workout to athletes
@@ -87,13 +94,22 @@ class Service {
       db.set(finalWorkout);
     }
   }
-  void addFriend(String uid, List<String> friends) async {
 
-    db = FirebaseDatabase.instance.ref("users/$uid/friends/");
-    await db.set(friends);
-    
+  void addFriends(String uid, List<String> friendIds) async {
+    db = FirebaseDatabase.instance.ref("users/$uid/friends");
+    DataSnapshot snapshot = await db.get();
+    if (snapshot.value != null) {
+      List<dynamic> currentFriends = snapshot.value as List<dynamic>;
+      for (dynamic id in currentFriends) {
+        if (!friendIds.contains(id)) {
+          friendIds.add(id);
+        }
+      }
+    }
+    db = FirebaseDatabase.instance.ref("users/$uid/friends");
+    await db.set(friendIds);
   }
-  
+
   Future<void> logWorkout(
       String uid, String workoutId, List<Set> sets, WeatherInfo weather) async {
     db = FirebaseDatabase.instance.ref("users/$uid/workouts/$workoutId/sets");
@@ -125,6 +141,9 @@ class Service {
     }
 
     await db.set(tempSets);
+    db = FirebaseDatabase.instance
+        .ref("users/$uid/workouts/$workoutId/completed");
+    db.set(true); //complete the workout
     db =
         FirebaseDatabase.instance.ref("users/$uid/workouts/$workoutId/weather");
     Map<String, dynamic> weatherMap = {
@@ -193,7 +212,9 @@ class Service {
     List<DisplayWorkout> workouts = [];
 
     db = FirebaseDatabase.instance.ref("users/$uid/friends");
-    List<Object?> friendsIds = (await db.get()).value as List<Object?>;
+    DataSnapshot friendIdsSnapshot = await db.get();
+    if (friendIdsSnapshot.value == null) return [];
+    List<Object?> friendsIds = friendIdsSnapshot.value as List<Object?>;
     for (Object? id in friendsIds) {
       String strId = id.toString();
       db = FirebaseDatabase.instance.ref();
@@ -208,7 +229,6 @@ class Service {
           snapshot.value as Map<Object?, Object?>;
       if (userMap['workouts'] != null) {
         String name = userMap['name'].toString();
-        //TODO get weather
 
         (userMap['workouts'] as Map<Object?, Object?>).forEach((key, workout) {
           dynamic sets = (workout as Map<Object?, Object?>)["sets"];
@@ -246,6 +266,7 @@ class Service {
             }
             tempSets.add(Set(reps: tempReps, setRest: setRest));
           }
+
           DateTime date = DateTime.parse(workout["date"].toString());
 
           date = DateTime(date.year, date.month, date.day)
@@ -265,7 +286,7 @@ class Service {
     workouts.sort((a, b) {
       return a.date.compareTo(b.date);
     });
-    return workouts;
+    return workouts.reversed.toList();
   }
 
   Duration parseDuration(String s) {

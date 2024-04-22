@@ -1,13 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:track_planner/utils/workout.dart';
 import 'package:track_planner/service.dart';
 
 class WorkoutSummary extends StatelessWidget {
   const WorkoutSummary({super.key, required this.workout});
   final DisplayWorkout workout;
-
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class WorkoutSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // summary and edit button
-          Text(
+          const Text(
             'Workout Summary',
             style: TextStyle(
               fontSize: 20,
@@ -32,37 +32,27 @@ class WorkoutSummary extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total Distance:'),
-              Text(
-                '${workout.totalDistance} Meters',
-                style: TextStyle(
-                  fontSize: 20
-                )
-              ),
+              const Text('Total Distance:'),
+              Text('${workout.totalDistance} Meters',
+                  style: const TextStyle(fontSize: 20)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total Time:'),
-              Text(
-                '${workout.totalTime.inMinutes.toString()} minutes',
-                style: TextStyle(
-                  fontSize: 20
-                )
-              ),
+              const Text('Total Time:'),
+              Text('${workout.totalTime.inMinutes.toString()} minutes',
+                  style: const TextStyle(fontSize: 20)),
             ],
           ),
-          Text('Notes:'),
+          const Text('Notes:'),
           Text(
             workout.notes,
-            style: TextStyle(
-              fontSize: 20
-            ),
+            style: const TextStyle(fontSize: 20),
             textAlign: TextAlign.right,
           ),
-          Text('Date: ' + workout.date.toIso8601String()),
-          Text('Athlete Name: ' + workout.name)       
+          Text('Date: ${DateFormat.yMMMMd().format(workout.date)}'),
+          Text('Athlete Name: ${workout.name}')
         ],
       ),
     );

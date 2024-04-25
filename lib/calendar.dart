@@ -47,6 +47,7 @@ class _CalendarState extends ConsumerState<Calendar> {
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
+      ref.read(selectedDayProvider.notifier).update((_) => selectedDay);
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
@@ -168,7 +169,6 @@ class _CalendarState extends ConsumerState<Calendar> {
                       );
                     },
                     selectedBuilder: (context, date, _) {
-                      final isSelected = isSameDay(date, selectedDay);
                       return SizedBox(
                         width: 48,
                         height: 48,

@@ -28,6 +28,8 @@ class _ActivitiesState extends State<Activities> {
     super.initState();
   }
 
+  late final _friendsActivities = Service().getFriendsWorkouts(user.uid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +38,7 @@ class _ActivitiesState extends State<Activities> {
           context: context,
         ),
         body: FutureBuilder(
-            future: _friends_activites,
+            future: _friendsActivities,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -58,6 +60,7 @@ class _ActivitiesState extends State<Activities> {
                   workouts.add(PreviewWorkout(workout: activity));
                 }
                 return ListView(
+                  padding: const EdgeInsets.all(8.0),
                   shrinkWrap: true,
                   children: workouts,
                 );

@@ -37,6 +37,12 @@ class _ProfileState extends ConsumerState<Profile> {
     getUserStuff(currentUser.uid);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _friends.dispose();
+  }
+
   void _logout(BuildContext context) {
     Auth().signOut();
     Navigator.pushReplacement(
@@ -53,11 +59,9 @@ class _ProfileState extends ConsumerState<Profile> {
 
   void getUserStuff(String uid) {
     service.getUser(uid).then((value) {
-      setState(() {
-        name = value["name"].toString();
-        gradYear = value["gradYear"].toString();
-        eventGroup = value["eventGroup"].toString();
-      });
+      name = value["name"].toString();
+      gradYear = value["gradYear"].toString();
+      eventGroup = value["eventGroup"].toString();
     });
   }
 

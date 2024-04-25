@@ -40,17 +40,11 @@ class _LogWorkoutState extends State<LogWorkout> {
         pageTitle: "Workout",
         trailingActions: [
           IconButton(
-            icon: const Icon(Icons.cloud),
-            onPressed: () async {
-              await fetchWeather();
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
               WeatherInfo weather = await fetchWeather();
-              Service().logWorkout(Auth().currentUser!.uid, widget.workout.id,
-                  widget.workout.sets, weather);
+              await Service().logWorkout(Auth().currentUser!.uid,
+                  widget.workout.id, widget.workout.sets, weather);
               Navigator.of(context).pop();
             },
           )

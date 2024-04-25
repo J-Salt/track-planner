@@ -144,21 +144,13 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
         pageTitle: "Create Workout",
         trailingActions: [
           IconButton(
-            icon: Icon(Icons.check),
+            icon: const Icon(Icons.check),
             onPressed: () {
-              //TODO: Remove my id and instead give a list of assigned users
-
               _showUserSelectionDialog(context).then((_) {
                 if (donePressed) {
                   Navigator.of(context).pop();
                 }
               });
-
-              //service.createWorkout(sets, setRests,
-              //["hl8yydfqLzdcy0cdDp3R6F1Kckq1"], _selectedDate);
-              widget.updateSelectedWorkouts(
-                  widget.getWorkoutsForDay(widget.selectedDay));
-
               widget.updateSelectedWorkouts(
                   widget.getWorkoutsForDay(widget.selectedDay));
             },

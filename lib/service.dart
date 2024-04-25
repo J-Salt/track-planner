@@ -229,16 +229,19 @@ class Service {
           snapshot.value as Map<Object?, Object?>;
       if (userMap['workouts'] != null) {
         String name = userMap['name'].toString();
-        if ((userMap['workouts'] as Map)["completed"] == null ||
-            (userMap['workouts'] as Map)["completed"] == false) continue;
+        Map<dynamic, dynamic> friendWorkouts = userMap['workouts'] as Map;
 
-        (userMap['workouts'] as Map<Object?, Object?>).forEach((key, workout) {
-          dynamic sets = (workout as Map<Object?, Object?>)["sets"];
+        for (MapEntry<dynamic, dynamic> workout in friendWorkouts.entries) {
+          if (workout.value['completed'] == null ||
+              workout.value['completed'] == false) {
+            continue;
+          }
+          dynamic sets = workout.value["sets"];
           String weather = "";
           String temp = "";
-          if (workout['weather'] != null) {
-            weather = (workout['weather'] as Map)['weather'].toString();
-            temp = (workout['weather'] as Map)['temp'].toString();
+          if (workout.value['weather'] != null) {
+            weather = (workout.value['weather'] as Map)['weather'].toString();
+            temp = (workout.value['weather'] as Map)['temp'].toString();
           }
 
           List<Set> tempSets = [];
@@ -269,20 +272,20 @@ class Service {
             tempSets.add(Set(reps: tempReps, setRest: setRest));
           }
 
-          DateTime date = DateTime.parse(workout["date"].toString());
+          DateTime date = DateTime.parse(workout.value["date"].toString());
 
           date = DateTime(date.year, date.month, date.day)
               .toUtc()
               .subtract(Duration(hours: 4));
 
           workouts.add(DisplayWorkout(
-              id: key.toString(),
+              id: workout.key.toString(),
               date: date,
               sets: tempSets,
               name: name,
               weather: weather,
               temp: temp));
-        });
+        }
       }
     }
     workouts.sort((a, b) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:track_planner/service.dart';
+import 'package:track_planner/utils/reusable_appbar.dart';
 import 'auth.dart';
 
 enum EventGroup {
@@ -45,7 +46,24 @@ class Register extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register Page")),
+      appBar: ReusableAppBar(
+        pageTitle: "Register Page",
+        context: context,
+        trailingActions: [
+          IconButton(
+              onPressed: () {
+                _register(
+                    emailController.value.text,
+                    passwordController.value.text,
+                    "${firstNameController.value.text} ${lastNameController.value.text}",
+                    eventGroupController.value.text,
+                    int.parse(gradYearController.value.text),
+                    ref.read(isCoachProvider.notifier).state);
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.check))
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -53,71 +71,130 @@ class Register extends ConsumerWidget {
             child: Form(
               child: Column(
                 children: [
-                  const Text("First Name"),
-                  TextField(
-                    controller: firstNameController,
-                    keyboardType: TextInputType.text,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: firstNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                          hintText: "First Name",
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)))),
+                    ),
                   ),
-                  const Text("Last Name"),
-                  TextField(
-                    controller: lastNameController,
-                    keyboardType: TextInputType.text,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: lastNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                          hintText: "Last Name",
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)))),
+                    ),
                   ),
-                  const Text("Graduation Year"),
-                  TextField(
-                    controller: gradYearController,
-                    keyboardType: TextInputType.number,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: gradYearController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                          hintText: "Graduation Year",
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)))),
+                    ),
                   ),
-                  const Text("Coach?"),
-                  Checkbox(
-                      value: ref.watch(isCoachProvider),
-                      onChanged: (val) {
-                        ref
-                            .read(isCoachProvider.notifier)
-                            .update((state) => val!);
-                      }),
-                  const Text("Event Group"),
-                  DropdownMenu<EventGroup>(
-                    initialSelection: EventGroup.shortSprints,
-                    controller: eventGroupController,
-                    requestFocusOnTap: true,
-                    label: const Text('Event Group'),
-                    onSelected: (EventGroup? group) {
-                      ref
-                          .read(selectedEventGroupProvider.notifier)
-                          .update((state) => group!);
-                    },
-                    dropdownMenuEntries: EventGroup.values
-                        .map<DropdownMenuEntry<EventGroup>>((EventGroup group) {
-                      return DropdownMenuEntry<EventGroup>(
-                        value: group,
-                        label: group.name,
-                      );
-                    }).toList(),
-                  ),
-                  const Text("Email"),
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const Text("Password"),
-                  TextField(
-                    controller: passwordController,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                  ),
-                  TextButton(
-                      onPressed: () => {
-                            _register(
-                                emailController.value.text,
-                                passwordController.value.text,
-                                "${firstNameController.value.text} ${lastNameController.value.text}",
-                                eventGroupController.value.text,
-                                int.parse(gradYearController.value.text),
-                                ref.read(isCoachProvider.notifier).state),
-                            Navigator.pop(context)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const Text("Coach?"),
+                            Checkbox(
+                                value: ref.watch(isCoachProvider),
+                                onChanged: (val) {
+                                  ref
+                                      .read(isCoachProvider.notifier)
+                                      .update((state) => val!);
+                                }),
+                          ],
+                        ),
+                        DropdownMenu<EventGroup>(
+                          initialSelection: EventGroup.shortSprints,
+                          controller: eventGroupController,
+                          requestFocusOnTap: true,
+                          enableSearch: false,
+                          label: const Text('Event Group'),
+                          inputDecorationTheme: const InputDecorationTheme(
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                            ),
+                          ),
+                          onSelected: (EventGroup? group) {
+                            ref
+                                .read(selectedEventGroupProvider.notifier)
+                                .update((state) => group!);
                           },
-                      child: const Text("Create Account"))
+                          dropdownMenuEntries: EventGroup.values
+                              .map<DropdownMenuEntry<EventGroup>>(
+                                  (EventGroup group) {
+                            return DropdownMenuEntry<EventGroup>(
+                              value: group,
+                              label: group.group,
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Divider(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                          hintText: "Email",
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)))),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: passwordController,
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                          hintText: "Password",
+                          filled: true,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)))),
+                    ),
+                  ),
                 ],
               ),
             ),

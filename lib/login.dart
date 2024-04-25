@@ -24,39 +24,67 @@ class Login extends StatelessWidget {
       appBar: ReusableAppBar(
         pageTitle: "Login",
         context: context,
+        trailingActions: [
+          IconButton(
+              onPressed: () => _login(emailController.value.text,
+                  passwordController.value.text, context),
+              icon: const Icon(Icons.check))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
           child: Form(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  onSubmitted: (String value) {
-                    email = value;
-                  },
-                ),
-                TextField(
-                  controller: passwordController,
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  onSubmitted: (String value) {
-                    password = value;
-                  },
-                ),
-                ElevatedButton(
-                  onPressed: () => _login(emailController.value.text,
-                      passwordController.value.text, context),
-                  child: Text("Login"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Register()),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    onSubmitted: (String value) {
+                      email = value;
+                    },
+                    decoration: const InputDecoration(
+                        hintText: "Email",
+                        filled: true,
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30)))),
                   ),
-                  child: const Text("Register"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: passwordController,
+                    keyboardType: TextInputType.text,
+                    obscureText: true,
+                    onSubmitted: (String value) {
+                      password = value;
+                    },
+                    decoration: const InputDecoration(
+                        hintText: "Password",
+                        filled: true,
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(30)))),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account? "),
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      ),
+                      child: const Text("Register"),
+                    ),
+                  ],
                 )
               ],
             ),

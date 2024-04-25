@@ -24,8 +24,6 @@ class CreateWorkout extends ConsumerStatefulWidget {
   _CreateWorkoutState createState() => _CreateWorkoutState();
 }
 
-//TODO workouts being created for the wrong day
-
 class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
   Service service = Service();
   List<List<Map<String, String>>> sets = [[]];

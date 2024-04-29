@@ -12,7 +12,7 @@ class ViewWorkout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: ReusableAppBar(
-          pageTitle: "View Workout",
+          pageTitle: "${workout.name}'s Workout",
           context: context,
         ),
         body: Column(

@@ -1,3 +1,8 @@
+/// Model class for [Workout] </br>
+/// [date] the workout is assigned to </br>
+/// [id] of the workout </br>
+/// [sets] List of sets </br>
+/// [notes] about the workout (Not implemented) </br>
 class Workout {
   final DateTime date;
   final String id;
@@ -10,6 +15,7 @@ class Workout {
     required this.sets,
   });
 
+  /// Calculates the total workout distance
   String get totalDistance {
     int totalDistance = 0;
     for (Set set in sets) {
@@ -20,6 +26,7 @@ class Workout {
     return totalDistance.toString();
   }
 
+  /// Calculates the total workout time
   Duration get totalTime {
     Duration totalTime = Duration();
     for (Set set in sets) {
@@ -31,7 +38,14 @@ class Workout {
   }
 }
 
-///For activities view, workout object includes information about the user.
+/// For activities view, [DisplayWorkout] includes information about the user. </br>
+/// [date] of the workout </br>
+/// [id] of the workout </br>
+/// [sets] in the workout </br>
+/// [notes] about the workout (Not implemented) </br>
+/// [name] of the athlete </br>
+/// [temp] during the workout </br>
+/// [weather] during the workout </br>
 class DisplayWorkout {
   final DateTime date;
   final String id;
@@ -71,6 +85,9 @@ class DisplayWorkout {
   }
 }
 
+/// Model class for [Set] </br>
+/// [setRest] - rest between this set and the next </br>
+/// [reps] - List of [Rep]'s in the current [Set] </br>
 class Set {
   final Duration setRest;
   final List<Rep> reps;

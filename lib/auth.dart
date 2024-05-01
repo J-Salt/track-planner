@@ -7,10 +7,13 @@ class Auth {
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  /// Signs in user with [email] and [password]
   Future<void> signIn({required email, required password}) async {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
+  /// Registers a user with [email] and [password]
+  /// Returns String [uid]
   Future<String> createUser({required email, required password}) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
@@ -31,6 +34,7 @@ class Auth {
     return 'User creation failed.';
   }
 
+  /// Signs out the current user
   Future<void> signOut() async {
     await _auth.signOut();
   }

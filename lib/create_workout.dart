@@ -15,6 +15,7 @@ class CreateWorkout extends ConsumerStatefulWidget {
   final DateTime selectedDay;
 
   const CreateWorkout({
+    super.key,
     required this.updateSelectedWorkouts,
     required this.getWorkoutsForDay,
     required this.selectedDay,
@@ -40,6 +41,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
     _selectedDate = ref.read(selectedDayProvider);
   }
 
+  // Get list of athletes for assigning workouts to
   void handleGetAthletes() {
     service.getAthletesForAssignment(user.uid).then((value) {
       setState(() {
@@ -48,6 +50,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
     });
   }
 
+  // Gather list of uid's for workout assignment
   List<String> _assignWorkouts(List<Map<String, dynamic>> athletes) {
     List<String> assignedAthletesIds = [];
     for (Map<String, dynamic> athlete in athletes) {
@@ -58,6 +61,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
     return assignedAthletesIds;
   }
 
+  // Show the popup window for selecting athletes
   Future<bool?> _showUserSelectionDialog(BuildContext context) async {
     await showDialog(
       context: context,
@@ -88,6 +92,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                                     onChanged: (isSelected) {
                                       _athletes.value[index]["selected"] =
                                           isSelected ?? false;
+                                      // Used to rebuild the checkboxes
                                       _athletes.notifyListeners();
                                     },
                                   ),
@@ -113,6 +118,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            // Assign the workouts to selected athletes
                             List<String> assignedAthletesIds =
                                 _assignWorkouts(_athletes.value);
                             service.createWorkout(sets, setRests,
@@ -149,6 +155,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
                   Navigator.of(context).pop();
                 }
               });
+              // Callback function to update the workouts for the selected day
               widget.updateSelectedWorkouts(
                   widget.getWorkoutsForDay(widget.selectedDay));
             },
@@ -186,7 +193,7 @@ class _CreateWorkoutState extends ConsumerState<CreateWorkout> {
             sets.add([]);
           });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

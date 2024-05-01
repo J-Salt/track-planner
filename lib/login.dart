@@ -7,6 +7,7 @@ import 'auth.dart';
 class Login extends StatelessWidget {
   Login({super.key});
 
+  //Log out user and replace the page
   void _login(email, password, context) async {
     await Auth().signIn(email: email, password: password);
     Navigator.pushReplacement(
@@ -76,7 +77,7 @@ class Login extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? "),
+                    const Text("Don't have an account? "),
                     TextButton(
                       onPressed: () => Navigator.push(
                         context,

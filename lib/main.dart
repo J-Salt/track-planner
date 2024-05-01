@@ -47,6 +47,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //Retrieve location permissions if needed
   @override
   void initState() {
     super.initState();
@@ -64,6 +65,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  //Index for the current page
   int currentPageIndex = 0;
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_picker/picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:track_planner/auth.dart';
@@ -10,6 +8,7 @@ import 'package:track_planner/utils/reusable_appbar.dart';
 import 'package:track_planner/utils/weather_info.dart';
 import 'package:track_planner/utils/workout.dart';
 
+// Log workout page
 class LogWorkout extends StatefulWidget {
   const LogWorkout({super.key, required this.workout});
   final Workout workout;
@@ -54,7 +53,7 @@ class _LogWorkoutState extends State<LogWorkout> {
         padding: const EdgeInsets.all(10.0),
         child: ListView.builder(
           //build sets
-          itemCount: widget.workout.sets.length, //access workout here
+          itemCount: widget.workout.sets.length,
           itemBuilder: (context, setIndex) {
             return Card(
               elevation: 2,
@@ -79,7 +78,7 @@ class _LogWorkoutState extends State<LogWorkout> {
                               _selectedRep = repIndex;
                             });
 
-                            await _showUserSelectionDialog(context,
+                            await _showRepLoggingDialog(context,
                                 widget.workout.sets[setIndex].reps[repIndex]);
                           },
                           child: Card(
@@ -152,6 +151,7 @@ class _LogWorkoutState extends State<LogWorkout> {
     );
   }
 
+  /// Helper function to fetch the current weather base on the users location
   Future<WeatherInfo> fetchWeather() async {
     await Geolocator.checkPermission().then((value) {
       switch (value) {
@@ -209,7 +209,8 @@ class _LogWorkoutState extends State<LogWorkout> {
     }
   }
 
-  Future<bool?> _showUserSelectionDialog(
+  // Dialog to log times for each rep
+  Future<bool?> _showRepLoggingDialog(
       BuildContext context, Rep selectedRep) async {
     List<TextEditingController> controllers = List.generate(
       int.parse(selectedRep.numReps),
@@ -299,6 +300,7 @@ class _LogWorkoutState extends State<LogWorkout> {
     );
   }
 
+  // Make sure each rep is logged with a value
   bool hasNonZeroDurations(List<Duration> durations) {
     //check if a list of durations contains all zeros
     for (var duration in durations) {

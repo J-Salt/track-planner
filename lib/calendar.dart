@@ -29,6 +29,7 @@ class _CalendarState extends ConsumerState<Calendar> {
   late User _user;
   bool _isCoach = false;
 
+  // Initialize state variables
   @override
   void initState() {
     super.initState();
@@ -39,12 +40,14 @@ class _CalendarState extends ConsumerState<Calendar> {
     _selectedWorkouts = ValueNotifier(_getWorkoutsForDay(_selectedDay!));
   }
 
+  // Dispose of _selectedWorkouts
   @override
   void dispose() {
     _selectedWorkouts.dispose();
     super.dispose();
   }
 
+  // Handle if a day is selected on the calendar
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
       ref.read(selectedDayProvider.notifier).update((_) => selectedDay);
@@ -57,15 +60,17 @@ class _CalendarState extends ConsumerState<Calendar> {
     }
   }
 
+  // Used to get the workouts for the selected day
   List<Workout> _getWorkoutsForDay(DateTime day) {
-    List<Workout> temp = workouts[day] ?? [];
     return workouts[day] ?? [];
   }
 
+  // Used to get days with workouts assigned
   Future<Map<DateTime, List<Workout>>> _getWorkoutDates() async {
     return await service.getWorkouts(uid);
   }
 
+  // Check if the current user is a coach to enable/disable the add workout button
   void isCurrentUserCoach(String uid) {
     service.getUser(uid).then(
       (value) {
@@ -89,6 +94,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       appBar: ReusableAppBar(
         pageTitle: "Calendar",
         context: context,
+        //Only display the button if the current user is a coach
         trailingActions: _isCoach
             ? [
                 IconButton(
@@ -114,6 +120,7 @@ class _CalendarState extends ConsumerState<Calendar> {
       body: FutureBuilder(
         future: _dates,
         builder: (context, snapshot) {
+          // Check the current state of the Future
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -190,6 +197,7 @@ class _CalendarState extends ConsumerState<Calendar> {
                   ),
                 ),
                 const Divider(),
+                // Display to show the workouts on the selected day
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

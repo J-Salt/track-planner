@@ -1,6 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
 import 'package:track_planner/utils/weather_info.dart';
 import 'package:track_planner/utils/workout.dart';
 import 'package:uuid/uuid.dart';
@@ -25,6 +23,7 @@ class Service {
         .catchError((err) => {print(err)});
   }
 
+  /// Gets user's database entry with [uid]
   Future<Map<Object?, Object?>> getUser(String uid) async {
     db = FirebaseDatabase.instance.ref("users/$uid");
 
@@ -32,6 +31,7 @@ class Service {
     return snapshot.value as Map<Object?, Object?>;
   }
 
+  /// Retrieve list of non-coach users with [uid]
   Future<List<Map<String, dynamic>>> getAthletesForAssignment(
       String uid) async {
     db = FirebaseDatabase.instance.ref("users");
@@ -60,6 +60,8 @@ class Service {
     return out;
   }
 
+  /// Create workout with [workout], [setRests], the [assignedAthletes], and [date] of the workout
+  /// [workout] is a List of sets, which are a List of Maps
   void createWorkout(List<List<Map<String, String>>> workout,
       List<Duration> setRests, List<String> assignedAthletes, DateTime date) {
     String uuid = const Uuid().v4();
@@ -95,6 +97,7 @@ class Service {
     }
   }
 
+  /// Add [friendIds] to a user's database entry with [uid]
   void addFriends(String uid, List<String> friendIds) async {
     db = FirebaseDatabase.instance.ref("users/$uid/friends");
     DataSnapshot snapshot = await db.get();
@@ -110,6 +113,8 @@ class Service {
     await db.set(friendIds);
   }
 
+  /// Mark a workout as completed in Firebase using [uid], along with the relevant [workoutId], [sets] with [repTime] filled out.
+  /// Also includes the [weather] for when the workout was logged
   Future<void> logWorkout(
       String uid, String workoutId, List<Set> sets, WeatherInfo weather) async {
     db = FirebaseDatabase.instance.ref("users/$uid/workouts/$workoutId/sets");
@@ -153,6 +158,7 @@ class Service {
     await db.update(weatherMap);
   }
 
+  /// Get a Map with the workout date as the key and a list of workouts as the value using [uid]
   Future<Map<DateTime, List<Workout>>> getWorkouts(String uid) async {
     Map<DateTime, List<Workout>> workouts = {};
     db = FirebaseDatabase.instance.ref("users/$uid/workouts");
@@ -191,9 +197,10 @@ class Service {
 
       DateTime date = DateTime.parse(workout["date"].toString());
 
+      // Used to adjust for UTC timing
       date = DateTime(date.year, date.month, date.day)
           .toUtc()
-          .subtract(Duration(hours: 4));
+          .subtract(const Duration(hours: 4));
 
       if (workouts.containsKey(date)) {
         workouts[date]
@@ -208,6 +215,7 @@ class Service {
     return workouts;
   }
 
+  /// Get a List of workouts completed by friends using [uid]
   Future<List<DisplayWorkout>> getFriendsWorkouts(String uid) async {
     List<DisplayWorkout> workouts = [];
 
@@ -288,12 +296,16 @@ class Service {
         }
       }
     }
+
+    //Sort the list by their date
     workouts.sort((a, b) {
       return a.date.compareTo(b.date);
     });
     return workouts.reversed.toList();
   }
 
+  /// Helper function to parse a Duration from String [s]
+  /// Meant to be used with time in the form HH:MM:SS
   Duration parseDuration(String s) {
     List<String> timeParts = s.split(':');
     if (s == "null" || s == "" || null == s) return Duration.zero;
@@ -305,6 +317,8 @@ class Service {
         seconds: int.parse(secondParts[0]));
   }
 
+  /// Helper function to parse a Duration from String [s]
+  /// Meant to be used with time in the form HH:MM:SS.ss
   Duration parseDuration2(String s) {
     List<String> timeParts = s.split(':');
     if (s == "null" || s == "" || null == s) return Duration.zero;
